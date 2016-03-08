@@ -7,9 +7,9 @@ import java.util.List;
  */
 public class CubicBezier {
     List<Point> points;
-    private Point V2_V1;
-    private Point V1_V0;
-    private Point V3_V2;
+    private Vector V2_V1;
+    private Vector V1_V0;
+    private Vector V3_V2;
     Point V0_2V1V2;
     Point V1_2V2V3;
 
@@ -17,9 +17,12 @@ public class CubicBezier {
         super();
         if(points.size() != 4) throw new IllegalArgumentException("The number of points must be 4");
         this.points = points;
-        V2_V1 = points.get(2).substract(points.get(1));
-        V1_V0 = points.get(1).substract(points.get(0));
-        V3_V2 = points.get(3).substract(points.get(2));
+//        V2_V1 = points.get(2).substract(points.get(1));
+//        V1_V0 = points.get(1).substract(points.get(0));
+//        V3_V2 = points.get(3).substract(points.get(2));
+        V2_V1 = new Vector(points.get(2), points.get(1));
+        V1_V0 = new Vector(points.get(1), points.get(0));
+        V3_V2 = new Vector(points.get(3), points.get(2));
         V0_2V1V2 = points.get(0)
                 .substract(points.get(1).scale(2))
 //                .scale(2)
@@ -45,10 +48,10 @@ public class CubicBezier {
         double B0 = (1-t)*(1-t);
         double B1 = 2*t*(1-t);
         double B2 = t*t;
-        return new Vector(V1_V0.scale(B0)
+        return V1_V0.scale(B0)
                 .sum(V2_V1.scale(B1))
                 .sum(V3_V2.scale(B2))
-                .scale(3));
+                .scale(3);
     }
 
     public Vector secondDerivative(double t) {
@@ -61,6 +64,7 @@ public class CubicBezier {
 
     public double curvature(double t) {
         Vector vp = firstDerivative(t);
+//        System.out.println(vp);
         Vector vpp = secondDerivative(t);
         double numerator = vp.crossProductZ(vpp);
         double denominator = Math.pow(vp.module(), 3);

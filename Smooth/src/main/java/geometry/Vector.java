@@ -18,6 +18,11 @@ public class Vector {
         this.vy = vy;
     }
 
+    public Vector(Point destination, Point origin) {
+        vx = destination.getX() - origin.getX();
+        vy = destination.getY() - origin.getY();
+    }
+
     public Vector(Point p) {
         vx = p.getX();
         vy = p.getY();
@@ -50,5 +55,17 @@ public class Vector {
 
     public Vector scale(double s) {
         return new Vector(s*vx, s*vy);
+    }
+
+    public Vector sum(Vector v) {
+        return new Vector(vx+v.vx, vy+v.vy);
+    }
+
+    @Override
+    public String toString() {
+        return "Vector{" +
+                vx + ", " +
+                vy +
+                '}';
     }
 }
