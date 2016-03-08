@@ -7,11 +7,27 @@ import java.util.List;
  */
 public class CubicBezier {
     List<Point> points;
+    private Point V2_V1;
+    private Point V1_V0;
+    private Point V3_V2;
+    Point V0_2V1V2;
+    Point V1_2V2V3;
 
     public CubicBezier(List<Point> points) {
         super();
         if(points.size() != 4) throw new IllegalArgumentException("The number of points must be 4");
         this.points = points;
+        V2_V1 = points.get(2).substract(points.get(1));
+        V1_V0 = points.get(1).substract(points.get(0));
+        V3_V2 = points.get(3).substract(points.get(2));
+        V0_2V1V2 = points.get(0)
+                .substract(points.get(1))
+                .scale(2)
+                .sum(points.get(2));
+        V1_2V2V3 = points.get(1)
+                .substract(points.get(2))
+                .scale(2)
+                .sum(points.get(3));
     }
 
     public Point value(double t) {
@@ -29,9 +45,6 @@ public class CubicBezier {
         double B0 = (1-t)*(1-t);
         double B1 = 2*t*(1-t);
         double B2 = t*t;
-        Point V1_V0 = points.get(1).substract(points.get(0));
-        Point V2_V1 = points.get(2).substract(points.get(1));
-        Point V3_V2 = points.get(3).substract(points.get(2));
         return V1_V0.scale(B0)
                 .sum(V2_V1.scale(B1))
                 .sum(V3_V2).scale(B2)
@@ -41,12 +54,6 @@ public class CubicBezier {
     public Point secondDerivative(double t) {
         double B0 = 1-t;
         double B1 = t;
-        Point V0_2V1V2 = points.get(0)
-                .substract(points.get(1)).scale(2)
-                .sum(points.get(2));
-        Point V1_2V2V3 = points.get(1)
-                .substract(points.get(2)).scale(2)
-                .sum(points.get(3));
         return V0_2V1V2.scale(B0)
                 .sum(V1_2V2V3).scale(B1)
                 .scale(6);
