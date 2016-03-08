@@ -21,12 +21,12 @@ public class CubicBezier {
         V1_V0 = points.get(1).substract(points.get(0));
         V3_V2 = points.get(3).substract(points.get(2));
         V0_2V1V2 = points.get(0)
-                .substract(points.get(1))
-                .scale(2)
+                .substract(points.get(1).scale(2))
+//                .scale(2)
                 .sum(points.get(2));
         V1_2V2V3 = points.get(1)
-                .substract(points.get(2))
-                .scale(2)
+                .substract(points.get(2).scale(2))
+//                .scale(2)
                 .sum(points.get(3));
     }
 
@@ -41,29 +41,41 @@ public class CubicBezier {
                 .sum(points.get(3).scale(B3));
     }
 
-    public Point firstDerivative(double t) {
+    public Vector firstDerivative(double t) {
         double B0 = (1-t)*(1-t);
         double B1 = 2*t*(1-t);
         double B2 = t*t;
-        return V1_V0.scale(B0)
+        return new Vector(V1_V0.scale(B0)
                 .sum(V2_V1.scale(B1))
                 .sum(V3_V2).scale(B2)
-                .scale(3);
+                .scale(3));
     }
 
-    public Point secondDerivative(double t) {
+    public Vector secondDerivative(double t) {
         double B0 = 1-t;
         double B1 = t;
-        return V0_2V1V2.scale(B0)
+        return new Vector(V0_2V1V2.scale(B0)
                 .sum(V1_2V2V3).scale(B1)
-                .scale(6);
+                .scale(6));
     }
 
-    private double curvature(double t) {
-        return 0;
+    public double curvature(double t) {
+        Vector vp = firstDerivative(t);
+        Vector vpp = secondDerivative(t);
+        double numerator = vp.crossProductZ(vpp);
+        double denominator = Math.pow(vp.module(), 3);
+        return numerator/denominator;
     }
 
-    private double curvatureRadius(double t) {
-        return 1/curvature(t);
+    public double curvatureRadius(double t) {
+        return Math.abs(1/curvature(t));
+    }
+
+    public Point curvatureCenter(double t) {
+        Vector vp = firstDerivative(t);
+        double curvatureRadius = curvatureRadius(t);
+        Vector vpPerpendicular = vp.perpendicular().normalize().scale(curvatureRadius);
+        Point p = value(t);
+        return p.sum(vpPerpendicular);
     }
 }

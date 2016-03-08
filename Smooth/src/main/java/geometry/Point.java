@@ -42,6 +42,10 @@ public class Point {
         return new Point(x-p.x, y-p.y);
     }
 
+    public Point sum(Vector v) {
+        return new Point(x+v.getVx(), y+v.getVy());
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

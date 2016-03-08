@@ -1,6 +1,7 @@
 package graphics;
 
 import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.util.gl2.GLUT;
 import geometry.CubicBezier;
 import geometry.Point;
 import graphics.myopengl.OpenGLWindow;
@@ -53,6 +54,15 @@ public class MyOpenGLWindow extends OpenGLWindow {
             gl.glVertex2d(p.getX(), p.getY());
         }
         gl.glEnd();
+        double curvatureRadius = cb.curvatureRadius(0.5);
+        Point center = cb.curvatureCenter(0.5);
+        System.out.println(curvatureRadius);
+        System.out.println(center);
+        GLUT glut = new GLUT();
+        gl.glPushMatrix();
+        gl.glTranslated(center.getX(), center.getY(), 0);
+        glut.glutSolidSphere(curvatureRadius, 20, 20);
+        gl.glPopMatrix();
     }
 
     @Override

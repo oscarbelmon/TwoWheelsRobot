@@ -37,7 +37,7 @@ public class MyGLEventListener implements GLEventListener {
 		gl.glMatrixMode(GL2.GL_PROJECTION);
 		
 		gl.glLoadIdentity();
-		gl.glOrtho(-width/2, width/2, -height/2, height/2, -10, 10);
+		gl.glOrtho(-width/2, width/2, -height/2, height/2, -100, 100);
 		gl.glMatrixMode(GL2.GL_MODELVIEW);
 		gl.glLoadIdentity();
 	}

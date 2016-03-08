@@ -18,6 +18,11 @@ public class Vector {
         this.vy = vy;
     }
 
+    public Vector(Point p) {
+        vx = p.getX();
+        vy = p.getY();
+    }
+
     public double getVx() {
         return vx;
     }
@@ -28,5 +33,22 @@ public class Vector {
 
     public Vector perpendicular() {
         return new Vector(vy, -vx);
+    }
+
+    public double module() {
+        return Math.sqrt(vx*vx + vy*vy);
+    }
+
+    public double crossProductZ(Vector v) {
+        return vx*v.vy - vy*v.vx;
+    }
+
+    public Vector normalize() {
+        double module = module();
+        return new Vector(vx/module, vy/module);
+    }
+
+    public Vector scale(double s) {
+        return new Vector(s*vx, s*vy);
     }
 }
