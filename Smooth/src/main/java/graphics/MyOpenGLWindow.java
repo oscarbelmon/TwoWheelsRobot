@@ -45,7 +45,18 @@ public class MyOpenGLWindow extends OpenGLWindow {
         gl.glEnd();
 
         CubicBezier cb = new CubicBezier(points);
+        double curvatureRadius = cb.curvatureRadius(0.5);
+        Point center = cb.curvatureCenter(0.5);
+        System.out.println(curvatureRadius);
+        System.out.println(center);
+        GLUT glut = new GLUT();
         gl.glColor3d(0,0,0);
+        gl.glPushMatrix();
+        gl.glTranslated(center.getX(), center.getY(), 0);
+        glut.glutSolidSphere(curvatureRadius, 20, 20);
+        gl.glPopMatrix();
+
+        gl.glColor3d(0,1,0);
         gl.glBegin(GL2.GL_LINE_STRIP);
         Point p;
         double steps = 20.0;
@@ -54,15 +65,6 @@ public class MyOpenGLWindow extends OpenGLWindow {
             gl.glVertex2d(p.getX(), p.getY());
         }
         gl.glEnd();
-        double curvatureRadius = cb.curvatureRadius(0.5);
-        Point center = cb.curvatureCenter(0.5);
-        System.out.println(curvatureRadius);
-        System.out.println(center);
-        GLUT glut = new GLUT();
-        gl.glPushMatrix();
-        gl.glTranslated(center.getX(), center.getY(), 0);
-        glut.glutSolidSphere(curvatureRadius, 20, 20);
-        gl.glPopMatrix();
     }
 
     @Override

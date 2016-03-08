@@ -68,13 +68,13 @@ public class CubicBezier {
     }
 
     public double curvatureRadius(double t) {
-        return Math.abs(1/curvature(t));
+        return 1/curvature(t);
     }
 
     public Point curvatureCenter(double t) {
         Vector vp = firstDerivative(t);
         double curvatureRadius = curvatureRadius(t);
-        Vector vpPerpendicular = vp.perpendicular().normalize().scale(curvatureRadius);
+        Vector vpPerpendicular = vp.perpendicular().normalize().scale(-curvatureRadius);
         Point p = value(t);
         return p.sum(vpPerpendicular);
     }
