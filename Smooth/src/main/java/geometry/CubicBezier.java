@@ -58,4 +58,12 @@ public class CubicBezier {
                 .sum(V1_2V2V3).scale(B1)
                 .scale(6);
     }
+
+    private double curvature(double t) {
+        return 0;
+    }
+
+    private double curvatureRadius(double t) {
+        return 1/curvature(t);
+    }
 }
