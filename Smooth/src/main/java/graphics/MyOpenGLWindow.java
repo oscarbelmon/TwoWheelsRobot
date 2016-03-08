@@ -38,33 +38,42 @@ public class MyOpenGLWindow extends OpenGLWindow {
     private void bezier(GL2 gl) {
         System.out.println("Dibuja");
 
+        CubicBezier cb = new CubicBezier(points);
+        double curvatureRadius = cb.curvatureRadius(0.5);
+        Point center = cb.curvatureCenter(0.5);
+        GLUT glut = new GLUT();
+        gl.glColor3d(0,0,0);
+        gl.glPushMatrix();
+        gl.glTranslated(center.getX(), center.getY(), 0);
+        glut.glutSolidSphere(curvatureRadius, 50, 50);
+        gl.glPopMatrix();
+
         gl.glColor3d(1,0,0);
         gl.glBegin(GL2.GL_LINE_STRIP);
         for(Point p: points)
             gl.glVertex2d(p.getX(), p.getY());
         gl.glEnd();
 
-        CubicBezier cb = new CubicBezier(points);
-        double curvatureRadius = cb.curvatureRadius(0.5);
-        Point center = cb.curvatureCenter(0.5);
-        System.out.println(curvatureRadius);
-        System.out.println(center);
-        GLUT glut = new GLUT();
-        gl.glColor3d(0,0,0);
+        Point onCurve = cb.value(0.5);
+        gl.glColor3d(1,1,0);
         gl.glPushMatrix();
-        gl.glTranslated(center.getX(), center.getY(), 0);
-        glut.glutSolidSphere(curvatureRadius, 20, 20);
+        gl.glBegin(GL2.GL_LINES);
+        gl.glVertex2d(center.getX(), center.getY());
+        gl.glVertex2d(onCurve.getX(), onCurve.getY());
+        gl.glEnd();
         gl.glPopMatrix();
 
         gl.glColor3d(0,1,0);
         gl.glBegin(GL2.GL_LINE_STRIP);
         Point p;
-        double steps = 20.0;
+        double steps = 30.0;
         for(int i = 0; i < steps; i++) {
             p = cb.value(i/steps);
             gl.glVertex2d(p.getX(), p.getY());
         }
         gl.glEnd();
+
+
     }
 
     @Override
