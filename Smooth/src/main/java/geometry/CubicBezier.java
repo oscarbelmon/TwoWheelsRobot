@@ -47,7 +47,7 @@ public class CubicBezier {
         double B2 = t*t;
         return new Vector(V1_V0.scale(B0)
                 .sum(V2_V1.scale(B1))
-                .sum(V3_V2).scale(B2)
+                .sum(V3_V2.scale(B2))
                 .scale(3));
     }
 
