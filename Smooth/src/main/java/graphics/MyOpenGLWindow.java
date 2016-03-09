@@ -1,5 +1,6 @@
 package graphics;
 
+import algorithm.DouglassPeucker;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.gl2.GLUT;
@@ -27,7 +28,17 @@ public class MyOpenGLWindow extends OpenGLWindow {
         gl.glPushMatrix();
 //        if(cnt == 4) bezier(gl);
         renderAllPoints(gl);
+        renderFilteredPoints(gl);
         gl.glPopMatrix();
+    }
+
+    private void renderFilteredPoints(GL2 gl) {
+        List<Point> filtered = new DouglassPeucker(points).simplify(10);
+        gl.glColor3d(1, 0, 0);
+        gl.glBegin(GL.GL_LINE_STRIP);
+        for(Point point: filtered)
+            gl.glVertex2d(point.getX(), point.getY());
+        gl.glEnd();
     }
 
     private void renderAllPoints(GL2 gl) {
