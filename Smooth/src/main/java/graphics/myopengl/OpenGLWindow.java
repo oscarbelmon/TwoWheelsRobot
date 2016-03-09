@@ -6,17 +6,13 @@ import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.awt.GLCanvas;
 
 import javax.swing.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 
-public abstract class OpenGLWindow extends ComponentAdapter implements MouseListener {
+public abstract class OpenGLWindow extends ComponentAdapter implements MouseListener, MouseMotionListener {
 	private JFrame jfWindow;
 	private GLCanvas glCanvas;
 	private MyGLEventListener glListener;
-	private MyMouseListener mouseListener;
-	
+
 	public OpenGLWindow() {
 		createGUI("OpenGL Window");
 	}
@@ -35,15 +31,14 @@ public abstract class OpenGLWindow extends ComponentAdapter implements MouseList
         glCanvas = new GLCanvas(caps);
 		jfWindow = new JFrame(title);
 		glCanvas.addComponentListener(this);
-		mouseListener = new MyMouseListener(this);
 		glCanvas.addMouseListener(this);
+        glCanvas.addMouseMotionListener(this);
 		glListener = new MyGLEventListener(this);
 		glCanvas.addGLEventListener(glListener);
 		jfWindow.getContentPane().add(glCanvas);
 		jfWindow.setSize(400, 400);
 		jfWindow.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		jfWindow.setVisible(true);
-        display();
 	}
 
     public int getWidth() {
@@ -80,5 +75,13 @@ public abstract class OpenGLWindow extends ComponentAdapter implements MouseList
 
     @Override
     public void mouseExited(MouseEvent mouseEvent) {
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
     }
 }

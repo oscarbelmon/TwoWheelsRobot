@@ -1,5 +1,6 @@
 package graphics;
 
+import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.gl2.GLUT;
 import geometry.CubicBezier;
@@ -17,12 +18,24 @@ public class MyOpenGLWindow extends OpenGLWindow {
     private List<Point> points = new ArrayList<>();
     private int cnt = 0;
 
+    public MyOpenGLWindow(String title) {
+        super(title);
+    }
+
     @Override
     public void render(GL2 gl) {
         gl.glPushMatrix();
-        gl.glColor3d(0,0,0);
-        if(cnt == 4) bezier(gl);
+//        if(cnt == 4) bezier(gl);
+        renderAllPoints(gl);
         gl.glPopMatrix();
+    }
+
+    private void renderAllPoints(GL2 gl) {
+        gl.glColor3d(0, 0, 0);
+        gl.glBegin(GL.GL_LINE_STRIP);
+        for(Point point: points)
+            gl.glVertex2d(point.getX(), point.getY());
+        gl.glEnd();
     }
 
     @Override
@@ -36,8 +49,6 @@ public class MyOpenGLWindow extends OpenGLWindow {
     }
 
     private void bezier(GL2 gl) {
-        System.out.println("Dibuja");
-
         CubicBezier cb = new CubicBezier(points);
         double curvatureRadius = cb.curvatureRadius(0.5);
         Point center = cb.curvatureCenter(0.5);
@@ -76,17 +87,25 @@ public class MyOpenGLWindow extends OpenGLWindow {
 
     }
 
+//    @Override
+//    public void mousePressed(MouseEvent e) {
+//        int x = e.getX()-getWidth()/2;
+//        int y = getHeight()/2-e.getY();
+//        points.add(new Point(x, y));
+//        cnt++;
+//        if(cnt == 4) {
+//            display();
+//            points = new ArrayList<>();
+//            cnt = 0;
+//        }
+//    }
+
+
     @Override
-    public void mousePressed(MouseEvent e) {
-        super.mousePressed(e);
+    public void mouseDragged(MouseEvent e) {
         int x = e.getX()-getWidth()/2;
         int y = getHeight()/2-e.getY();
         points.add(new Point(x, y));
-        cnt++;
-        if(cnt == 4) {
-            display();
-            points = new ArrayList<>();
-            cnt = 0;
-        }
+        display();
     }
 }
