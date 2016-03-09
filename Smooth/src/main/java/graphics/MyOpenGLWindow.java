@@ -6,8 +6,10 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.gl2.GLUT;
 import geometry.CubicBezier;
 import geometry.Point;
+import geometry.Vector;
 import graphics.myopengl.OpenGLWindow;
 
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +30,30 @@ public class MyOpenGLWindow extends OpenGLWindow {
         gl.glPushMatrix();
 //        if(cnt == 4) bezier(gl);
         renderAllPoints(gl);
-        renderFilteredPoints(gl);
+//        renderFilteredPoints(gl);
+        renderTangents(gl);
         gl.glPopMatrix();
+    }
+
+    private void renderTangents(GL2 gl) {
+        if(points.size() < 2) return;
+//        Vector origin = new Vector(points.get(1), points.get(0));
+//        origin = origin.normalize().scale(20);
+        Vector origin = getTangentNormalizedAtStart(points).scale(20);
+        Point destination = points.get(0).sum(origin);
+        gl.glColor3d(0, 1, 0);
+        gl.glBegin(GL.GL_LINES);
+        gl.glVertex2d(points.get(0).getX(), points.get(0).getY());
+        gl.glVertex2d(destination.getX(), destination.getY());
+        gl.glEnd();
+    }
+
+    private Vector getTangentNormalizedAtStart(List<Point> points) {
+        return new Vector(points.get(1), points.get(0)).normalize();
+    }
+
+    private Vector getTangentNormalizedAtEnd(List<Point> points) {
+        return new Vector(points.get(points.size()-1), points.get(points.size()-2)).normalize();
     }
 
     private void renderFilteredPoints(GL2 gl) {
@@ -118,5 +142,14 @@ public class MyOpenGLWindow extends OpenGLWindow {
         int y = getHeight()/2-e.getY();
         points.add(new Point(x, y));
         display();
+    }
+
+
+    @Override
+    public void keyPressed(KeyEvent keyEvent) {
+//        System.out.println(keyEvent.getKeyCode());
+//        System.out.println(KeyEvent.VK_ENTER);
+        if(keyEvent.getKeyCode() == KeyEvent.VK_ENTER)
+            points = new ArrayList<>();
     }
 }

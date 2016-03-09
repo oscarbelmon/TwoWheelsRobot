@@ -7,8 +7,11 @@ import com.jogamp.opengl.awt.GLCanvas;
 
 import javax.swing.*;
 import java.awt.event.*;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
-public abstract class OpenGLWindow extends ComponentAdapter implements MouseListener, MouseMotionListener {
+public abstract class OpenGLWindow extends ComponentAdapter implements MouseListener, MouseMotionListener, KeyListener {
 	private JFrame jfWindow;
 	private GLCanvas glCanvas;
 	private MyGLEventListener glListener;
@@ -30,9 +33,11 @@ public abstract class OpenGLWindow extends ComponentAdapter implements MouseList
         GLCapabilities caps = new GLCapabilities(glp);
         glCanvas = new GLCanvas(caps);
 		jfWindow = new JFrame(title);
+//        jfWindow.addKeyListener(this);
 		glCanvas.addComponentListener(this);
 		glCanvas.addMouseListener(this);
         glCanvas.addMouseMotionListener(this);
+        glCanvas.addKeyListener(this);
 		glListener = new MyGLEventListener(this);
 		glCanvas.addGLEventListener(glListener);
 		jfWindow.getContentPane().add(glCanvas);
@@ -84,4 +89,17 @@ public abstract class OpenGLWindow extends ComponentAdapter implements MouseList
     @Override
     public void mouseMoved(MouseEvent e) {
     }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+    }
+
 }
