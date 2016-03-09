@@ -1,6 +1,7 @@
 package algorithm;
 
 import geometry.Point;
+import geometry.PointsStrip;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -15,20 +16,33 @@ import static org.hamcrest.core.Is.*;
 public class DouglassPeuckerTest {
     @Test
     public void test1() {
-        List<Point> points = new ArrayList<>();
-        points.add(new Point());
-        points.add(new Point(5,5));
-        points.add(new Point(9,3));
-        points.add(new Point(12,2));
-        points.add(new Point(14,4));
-        points.add(new Point(18,3));
-        points.add(new Point(22,-2));
-        points.add(new Point(29,8));
-        points.add(new Point(32,3));
-        points.add(new Point(37,3));
+//        List<Point> points = new ArrayList<>();
+//        points.add(new Point());
+//        points.add(new Point(5,5));
+//        points.add(new Point(9,3));
+//        points.add(new Point(12,2));
+//        points.add(new Point(14,4));
+//        points.add(new Point(18,3));
+//        points.add(new Point(22,-2));
+//        points.add(new Point(29,8));
+//        points.add(new Point(32,3));
+//        points.add(new Point(37,3));
+        PointsStrip points = new PointsStrip();
+        points.addPoint(new Point());
+        points.addPoint(new Point(5,5));
+        points.addPoint(new Point(9,3));
+        points.addPoint(new Point(12,2));
+        points.addPoint(new Point(14,4));
+        points.addPoint(new Point(18,3));
+        points.addPoint(new Point(22,-2));
+        points.addPoint(new Point(29,8));
+        points.addPoint(new Point(32,3));
+        points.addPoint(new Point(37,3));
+
 
         DouglassPeucker douglassPeucker = new DouglassPeucker(points);
-        List<Point> result = douglassPeucker.simplify(6);
+//        List<Point> result = douglassPeucker.simplify(6);
+        PointsStrip result = douglassPeucker.simplify(6);
 //        for(Point p: result)
 //            System.out.println(p);
         assertThat(result.size(), is(2));

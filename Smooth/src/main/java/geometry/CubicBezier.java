@@ -6,14 +6,14 @@ import java.util.List;
  * Created by oscar on 5/03/16.
  */
 public class CubicBezier {
-    private List<Point> points;
+    private PointsStrip points;
     private Vector V2_V1;
     private Vector V1_V0;
     private Vector V3_V2;
     private Vector V0_2V1V2;
     private Vector V1_2V2V3;
 
-    public CubicBezier(List<Point> points) {
+    public CubicBezier(PointsStrip points) {
         super();
         if(points.size() != 4) throw new IllegalArgumentException("The number of points must be 4");
         this.points = points;

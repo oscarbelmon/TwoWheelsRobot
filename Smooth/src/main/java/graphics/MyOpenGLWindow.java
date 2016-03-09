@@ -6,6 +6,7 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.gl2.GLUT;
 import geometry.CubicBezier;
 import geometry.Point;
+import geometry.PointsStrip;
 import geometry.Vector;
 import graphics.myopengl.OpenGLWindow;
 
@@ -18,7 +19,8 @@ import java.util.List;
  * Created by oscar on 12/2/16.
  */
 public class MyOpenGLWindow extends OpenGLWindow {
-    private List<Point> points = new ArrayList<>();
+//    private List<Point> points = new ArrayList<>();
+    private PointsStrip points = new PointsStrip();
     private int cnt = 0;
 
     public MyOpenGLWindow(String title) {
@@ -30,16 +32,14 @@ public class MyOpenGLWindow extends OpenGLWindow {
         gl.glPushMatrix();
 //        if(cnt == 4) bezier(gl);
         renderAllPoints(gl);
-//        renderFilteredPoints(gl);
+        renderFilteredPoints(gl);
         renderTangents(gl);
         gl.glPopMatrix();
     }
 
     private void renderTangents(GL2 gl) {
         if(points.size() < 2) return;
-//        Vector origin = new Vector(points.get(1), points.get(0));
-//        origin = origin.normalize().scale(20);
-        Vector origin = getTangentNormalizedAtStart(points).scale(20);
+        Vector origin = points.getTangentNormalizedAtStart().scale(20);
         Point destination = points.get(0).sum(origin);
         gl.glColor3d(0, 1, 0);
         gl.glBegin(GL.GL_LINES);
@@ -48,19 +48,12 @@ public class MyOpenGLWindow extends OpenGLWindow {
         gl.glEnd();
     }
 
-    private Vector getTangentNormalizedAtStart(List<Point> points) {
-        return new Vector(points.get(1), points.get(0)).normalize();
-    }
-
-    private Vector getTangentNormalizedAtEnd(List<Point> points) {
-        return new Vector(points.get(points.size()-1), points.get(points.size()-2)).normalize();
-    }
 
     private void renderFilteredPoints(GL2 gl) {
-        List<Point> filtered = new DouglassPeucker(points).simplify(10);
+        PointsStrip filtered = new DouglassPeucker(points).simplify(5);
         gl.glColor3d(1, 0, 0);
         gl.glBegin(GL.GL_LINE_STRIP);
-        for(Point point: filtered)
+        for(Point point: filtered.getPoints())
             gl.glVertex2d(point.getX(), point.getY());
         gl.glEnd();
     }
@@ -68,7 +61,7 @@ public class MyOpenGLWindow extends OpenGLWindow {
     private void renderAllPoints(GL2 gl) {
         gl.glColor3d(0, 0, 0);
         gl.glBegin(GL.GL_LINE_STRIP);
-        for(Point point: points)
+        for(Point point: points.getPoints())
             gl.glVertex2d(point.getX(), point.getY());
         gl.glEnd();
     }
@@ -96,7 +89,7 @@ public class MyOpenGLWindow extends OpenGLWindow {
 
         gl.glColor3d(1,0,0);
         gl.glBegin(GL2.GL_LINE_STRIP);
-        for(Point p: points)
+        for(Point p: points.getPoints())
             gl.glVertex2d(p.getX(), p.getY());
         gl.glEnd();
 
@@ -140,16 +133,14 @@ public class MyOpenGLWindow extends OpenGLWindow {
     public void mouseDragged(MouseEvent e) {
         int x = e.getX()-getWidth()/2;
         int y = getHeight()/2-e.getY();
-        points.add(new Point(x, y));
+        points.addPoint(new Point(x, y));
         display();
     }
 
 
     @Override
     public void keyPressed(KeyEvent keyEvent) {
-//        System.out.println(keyEvent.getKeyCode());
-//        System.out.println(KeyEvent.VK_ENTER);
         if(keyEvent.getKeyCode() == KeyEvent.VK_ENTER)
-            points = new ArrayList<>();
+            points = new PointsStrip();
     }
 }
