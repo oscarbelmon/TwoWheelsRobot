@@ -19,12 +19,11 @@ public class ChordParameterization {
         parameterize();
     }
 
+    public List<Point> getPoints() {
+        return points;
+    }
+
     private void parameterize() {
-//        double t = 0;
-//        for(Point point: points) {
-//            parameterizedPoints.put(point, t);
-//            t += 1/20.0;
-//        }
         parameterizedPoints.put(points.get(0), new Double(0));
         parameterizedPoints.put(points.get(points.size()-1), new Double(1));
         double totalLength = totalLength(points);

@@ -17,6 +17,7 @@ public class PointsStrip {
     }
 
     public PointsStrip(List<Point> points) {
+        super();
         this.points = points;
     }
 
