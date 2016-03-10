@@ -40,10 +40,6 @@ public class Vector {
         return new Vector(vy, -vx);
     }
 
-//    public double module() {
-//        return Math.sqrt(vx*vx + vy*vy);
-//    }
-
     public double module() {
         return Math.sqrt(dotProduct(this));
     }

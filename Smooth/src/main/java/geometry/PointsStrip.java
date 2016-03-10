@@ -164,7 +164,6 @@ public class PointsStrip {
     }
 
     public CubicBezier fit() {
-//        parameterization = new ChordParameterization(points);
         PointsStrip ps = new PointsStrip();
         ps.addPoint(points.get(0));
         Point p1 = points.get(0).sum(getTangentNormalizedAtStart().scale(alpha1()));
@@ -173,6 +172,73 @@ public class PointsStrip {
         ps.addPoint(p2);
         ps.addPoint(points.get(points.size()-1));
         return new CubicBezier(ps);
+    }
+
+    public List<CubicBezier> fit(double threshold) {
+        List<CubicBezier> result = new ArrayList<>();
+        FitError fitError = fitError();
+        PointsStrip ps1, ps2;
+        List<Point> l1, l2;
+        List<CubicBezier> fe1, fe2;
+        if(fitError.totalError > threshold) {
+            l1 = points.subList(0, points.indexOf(fitError.worstFittedPoint)+1);
+            ps1 = new PointsStrip(l1, new ChordParameterization(l1));
+            fe1 = ps1.fit(threshold);
+            l2 = points.subList(points.indexOf(fitError.worstFittedPoint)+1, points.size());
+            ps2 = new PointsStrip(l2, new ChordParameterization(l2));
+            fe2 = ps2.fit(threshold);
+            result.addAll(fe1);
+            result.addAll(fe2);
+        } else result.add(fitError.cb);
+        return result;
+    }
+
+    public FitError fitError() {
+        double t, d = 0, dTmp, error = 0;
+        Point onCurve, worstPoint = new Point();
+        CubicBezier cb = fit();
+        for(Point point: points) {
+            t = parameterization.getParameter(point);
+            onCurve = cb.value(t);
+            dTmp = onCurve.distance(point);
+            error += dTmp;
+            if(d < dTmp) {
+                d = dTmp;
+                worstPoint = point;
+            }
+        }
+        return new FitError(cb, d, error, worstPoint);
+    }
+
+    public Point worstPointFitted() {
+        double t, d = 0, dTmp;
+        Point onCurve, result = new Point();
+        CubicBezier cb = fit();
+        for(Point point: points) {
+            t = parameterization.getParameter(point);
+            onCurve = cb.value(t);
+            dTmp = onCurve.distance(point);
+//            System.out.println("t: " + t + ", " + "d:" + dTmp);
+            if(d < dTmp) {
+                d = dTmp;
+                result = point;
+            }
+        }
+        return result;
+    }
+
+    private class FitError {
+        CubicBezier cb;
+        double maxError;
+        double totalError;
+        Point worstFittedPoint;
+
+        public FitError(CubicBezier cb, double maxError, double totalError, Point worstFittedPoint) {
+            this.cb = cb;
+            this.maxError = maxError;
+            this.totalError = totalError;
+            this.worstFittedPoint = worstFittedPoint;
+        }
     }
 
     @Override

@@ -2,6 +2,8 @@ package graphics;
 
 import algorithm.ChordParameterization;
 import algorithm.DouglassPeucker;
+import algorithm.NewtonRaphsonParameterization;
+import algorithm.Parameterization;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.gl2.GLUT;
@@ -37,11 +39,35 @@ public class MyOpenGLWindow extends OpenGLWindow {
 //        renderTangents(gl);
 //        if(cb != null) bezier2(gl, cb);
 //        else {
-//            bezier2(gl, model);
+////            bezier2(gl, model);
 //            renderAllPoints(gl);
 //        }
-        coso(gl);
+//        coso(gl);
+        coso2(gl);
         gl.glPopMatrix();
+    }
+
+    private void coso2(GL2 gl) {
+        PointsStrip ps = new PointsStrip();
+        ps.addPoint(new Point(-100, 100));
+        ps.addPoint(new Point(100, 100));
+        ps.addPoint(new Point(100, -100));
+        ps.addPoint(new Point(-100, -100));
+        CubicBezier cb = new CubicBezier(ps);
+        gl.glColor3d(0,1,0);
+        bezier2(gl, cb);
+
+        List<Point> points = new ArrayList<>();
+        for(int i = 0; i < 21; i++) {
+            points.add(cb.value(i/20.0));
+        }
+
+        Parameterization parameterization = new ChordParameterization(points);
+        PointsStrip ps2 = new PointsStrip(points, parameterization);
+        List<CubicBezier> cubics = ps2.fit(10);
+        gl.glColor3d(1,0,0);
+        for(CubicBezier cubic: cubics)
+            bezier2(gl, cubic);
     }
 
     private void coso(GL2 gl) {
@@ -58,10 +84,16 @@ public class MyOpenGLWindow extends OpenGLWindow {
         for(int i = 0; i < 21; i++) {
             points.add(cb.value((double)i/20.0));
         }
-        PointsStrip ps2 = new PointsStrip(points, new ChordParameterization(points));
+        Parameterization parameterization = new ChordParameterization(points);
+        PointsStrip ps2 = new PointsStrip(points, parameterization);
         CubicBezier cb2 = ps2.fit();
         gl.glColor3d(1,0,0);
         bezier2(gl, cb2);
+
+        PointsStrip ps3 = new PointsStrip(points, new NewtonRaphsonParameterization(parameterization, cb2));
+        CubicBezier cb3 = ps3.fit();
+        gl.glColor3d(0,0,1);
+        bezier2(gl, cb3);
 
     }
 
@@ -75,11 +107,12 @@ public class MyOpenGLWindow extends OpenGLWindow {
         }
         gl.glEnd();
 
-        gl.glColor3d(0,0,0);
-        gl.glBegin(GL.GL_LINE_STRIP);
-        for(int i = 0; i < 4; i++)
-            gl.glVertex2d(cb.getPoint(i).getX(), cb.getPoint(i).getY());
-        gl.glEnd();
+        // Control points
+//        gl.glColor3d(0,0,0);
+//        gl.glBegin(GL.GL_LINE_STRIP);
+//        for(int i = 0; i < 4; i++)
+//            gl.glVertex2d(cb.getPoint(i).getX(), cb.getPoint(i).getY());
+//        gl.glEnd();
     }
 
     private void renderTangents(GL2 gl) {
@@ -191,8 +224,12 @@ public class MyOpenGLWindow extends OpenGLWindow {
                 cb = null;
                 break;
             case KeyEvent.VK_F :
-                cb = points.fit();
-                System.out.println(cb);
+                Parameterization parameterization = new ChordParameterization(points.getPoints());
+                PointsStrip ps = new PointsStrip(points.getPoints(), parameterization);
+                cb = ps.fit();
+//                parameterization = new NewtonRaphsonParameterization(parameterization, cb);
+////                System.out.println(cb);
+//                cb = new PointsStrip(points.getPoints(), parameterization).fit();
                 display();
                 break;
         }
