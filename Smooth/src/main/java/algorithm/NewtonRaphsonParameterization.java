@@ -4,29 +4,26 @@ import geometry.CubicBezier;
 import geometry.Point;
 import geometry.Vector;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 /**
  * Created by oscar on 10/3/16.
  */
-public class NewtonRaphsonParameterization {
-    private Map<Point, Double> parameterizedPoints = new HashMap<>();
-    private List<Point> points;
+public class NewtonRaphsonParameterization extends Parameterization {
+    private Parameterization parameterization;
+    private CubicBezier cb;
 
-    public NewtonRaphsonParameterization(ChordParameterization cp, CubicBezier cb) {
-        super();
-        points = cp.getPoints();
-        parameterize(cp, cb);
+    public NewtonRaphsonParameterization(Parameterization parameterization, CubicBezier cb) {
+        super(parameterization.getPoints());
+        this.parameterization = parameterization;
+        this.cb = cb;
+        parameterize();
     }
 
-    private void parameterize(ChordParameterization cp, CubicBezier cb) {
+    public void parameterize() {
         double t, numerator, denominator;
         Point qt;
         Vector qtp, qtp2;
-        for(Point point: cp.getPoints()) {
-            t = cp.getParameter(point);
+        for(Point point: parameterization.getPoints()) {
+            t = parameterization.getParameter(point);
             qt = cb.value(t);
             qtp = cb.firstDerivative(t);
             numerator = new Vector(qt, point).dotProduct(qtp);
@@ -34,14 +31,5 @@ public class NewtonRaphsonParameterization {
             denominator = qtp.dotProduct(qtp) - new Vector(qt, point).dotProduct(qtp2);
             parameterizedPoints.put(point, t - numerator/denominator);
         }
-    }
-
-    public double getParameter(Point p) {
-        return parameterizedPoints.get(p).doubleValue();
-    }
-
-    public void showParameterization() {
-        for(Point point: points)
-            System.out.println(parameterizedPoints.get(point));
     }
 }
