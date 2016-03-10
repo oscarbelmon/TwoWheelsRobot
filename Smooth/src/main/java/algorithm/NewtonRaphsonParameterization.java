@@ -14,18 +14,14 @@ import java.util.Map;
 public class NewtonRaphsonParameterization {
     private Map<Point, Double> parameterizedPoints = new HashMap<>();
     private List<Point> points;
-    private ChordParameterization cp;
-    private CubicBezier cb;
 
     public NewtonRaphsonParameterization(ChordParameterization cp, CubicBezier cb) {
         super();
-        this.cp = cp;
-        this.cb = cb;
         points = cp.getPoints();
-        parameterize();
+        parameterize(cp, cb);
     }
 
-    private void parameterize() {
+    private void parameterize(ChordParameterization cp, CubicBezier cb) {
         double t, numerator, denominator;
         Point qt;
         Vector qtp, qtp2;
