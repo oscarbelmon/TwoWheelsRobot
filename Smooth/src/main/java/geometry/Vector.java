@@ -40,8 +40,16 @@ public class Vector {
         return new Vector(vy, -vx);
     }
 
+//    public double module() {
+//        return Math.sqrt(vx*vx + vy*vy);
+//    }
+
     public double module() {
-        return Math.sqrt(vx*vx + vy*vy);
+        return Math.sqrt(dotProduct(this));
+    }
+
+    public double dotProduct(Vector v) {
+        return vx*v.vx + vy*v.vy;
     }
 
     public double crossProductZ(Vector v) {

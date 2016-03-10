@@ -74,4 +74,15 @@ public class CubicBezier {
         Point p = value(t);
         return p.sum(vpPerpendicular);
     }
+
+    public Point getPoint(int index) {
+        return points.getPoints().get(index);
+    }
+
+    @Override
+    public String toString() {
+        return "CubicBezier{" +
+                "points=" + points +
+                '}';
+    }
 }

@@ -21,12 +21,12 @@ public class ChordParameterizationTest {
         points.add(new Point(5,0));
         points.add(new Point(6,0));
         ChordParameterization cp = new ChordParameterization(points);
-        System.out.println(cp.getParamter(new Point(0,0)));
-        System.out.println(cp.getParamter(new Point(1,0)));
-        System.out.println(cp.getParamter(new Point(2,0)));
-        System.out.println(cp.getParamter(new Point(3,0)));
-        System.out.println(cp.getParamter(new Point(4,0)));
-        System.out.println(cp.getParamter(new Point(5,0)));
-        System.out.println(cp.getParamter(new Point(6,0)));
+        System.out.println(cp.getParameter(new Point(0,0)));
+        System.out.println(cp.getParameter(new Point(1,0)));
+        System.out.println(cp.getParameter(new Point(2,0)));
+        System.out.println(cp.getParameter(new Point(3,0)));
+        System.out.println(cp.getParameter(new Point(4,0)));
+        System.out.println(cp.getParameter(new Point(5,0)));
+        System.out.println(cp.getParameter(new Point(6,0)));
     }
 }

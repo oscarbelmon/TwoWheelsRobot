@@ -11,9 +11,20 @@ import java.util.Map;
  */
 public class ChordParameterization {
     private Map<Point, Double> parameterizedPoints = new HashMap<>();
+    private List<Point> points;
 
     public ChordParameterization(List<Point> points) {
         super();
+        this.points = points;
+        parameterize();
+    }
+
+    private void parameterize() {
+//        double t = 0;
+//        for(Point point: points) {
+//            parameterizedPoints.put(point, t);
+//            t += 1/20.0;
+//        }
         parameterizedPoints.put(points.get(0), new Double(0));
         parameterizedPoints.put(points.get(points.size()-1), new Double(1));
         double totalLength = totalLength(points);
@@ -31,7 +42,12 @@ public class ChordParameterization {
         return length;
     }
 
-    public double getParamter(Point p) {
+    public double getParameter(Point p) {
         return parameterizedPoints.get(p).doubleValue();
+    }
+
+    public void showParameterization() {
+        for(Point point: points)
+            System.out.println(parameterizedPoints.get(point));
     }
 }

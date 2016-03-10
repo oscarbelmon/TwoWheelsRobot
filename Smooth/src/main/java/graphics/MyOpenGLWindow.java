@@ -1,5 +1,6 @@
 package graphics;
 
+import algorithm.ChordParameterization;
 import algorithm.DouglassPeucker;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
@@ -19,9 +20,9 @@ import java.util.List;
  * Created by oscar on 12/2/16.
  */
 public class MyOpenGLWindow extends OpenGLWindow {
-//    private List<Point> points = new ArrayList<>();
     private PointsStrip points = new PointsStrip();
     private int cnt = 0;
+    private CubicBezier cb = null;
 
     public MyOpenGLWindow(String title) {
         super(title);
@@ -31,10 +32,54 @@ public class MyOpenGLWindow extends OpenGLWindow {
     public void render(GL2 gl) {
         gl.glPushMatrix();
 //        if(cnt == 4) bezier(gl);
-        renderAllPoints(gl);
-        renderFilteredPoints(gl);
-        renderTangents(gl);
+//        renderAllPoints(gl);
+//        renderFilteredPoints(gl);
+//        renderTangents(gl);
+//        if(cb != null) bezier2(gl, cb);
+//        else {
+//            bezier2(gl, model);
+//            renderAllPoints(gl);
+//        }
+        coso(gl);
         gl.glPopMatrix();
+    }
+
+    private void coso(GL2 gl) {
+        PointsStrip ps = new PointsStrip();
+        ps.addPoint(new Point(-100, 100));
+        ps.addPoint(new Point(100, 100));
+        ps.addPoint(new Point(100, -100));
+        ps.addPoint(new Point(-100, -100));
+        CubicBezier cb = new CubicBezier(ps);
+        gl.glColor3d(0,1,0);
+        bezier2(gl, cb);
+
+        List<Point> points = new ArrayList<>();
+        for(int i = 0; i < 21; i++) {
+            points.add(cb.value((double)i/20.0));
+        }
+        PointsStrip ps2 = new PointsStrip(points);
+        CubicBezier cb2 = ps2.fit();
+        gl.glColor3d(1,0,0);
+        bezier2(gl, cb2);
+
+    }
+
+    private void bezier2(GL2 gl, CubicBezier cb) {
+        gl.glBegin(GL2.GL_LINE_STRIP);
+        Point p;
+        double steps = 30.0;
+        for(int i = 0; i <= steps; i++) {
+            p = cb.value(i/steps);
+            gl.glVertex2d(p.getX(), p.getY());
+        }
+        gl.glEnd();
+
+        gl.glColor3d(0,0,0);
+        gl.glBegin(GL.GL_LINE_STRIP);
+        for(int i = 0; i < 4; i++)
+            gl.glVertex2d(cb.getPoint(i).getX(), cb.getPoint(i).getY());
+        gl.glEnd();
     }
 
     private void renderTangents(GL2 gl) {
@@ -140,7 +185,16 @@ public class MyOpenGLWindow extends OpenGLWindow {
 
     @Override
     public void keyPressed(KeyEvent keyEvent) {
-        if(keyEvent.getKeyCode() == KeyEvent.VK_ENTER)
-            points = new PointsStrip();
+        switch (keyEvent.getKeyCode()) {
+            case KeyEvent.VK_ENTER :
+                points = new PointsStrip();
+                cb = null;
+                break;
+            case KeyEvent.VK_F :
+                cb = points.fit();
+                System.out.println(cb);
+                display();
+                break;
+        }
     }
 }
