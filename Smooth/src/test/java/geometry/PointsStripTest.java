@@ -24,10 +24,10 @@ public class PointsStripTest {
         for(int i = 0; i < 21; i++) {
             points.add(cb.value(i/20.0));
         }
-        PointsStrip ps2 = new PointsStrip(points);
+        PointsStrip ps2 = new PointsStrip(points, new ChordParameterization(points));
         CubicBezier cb2 = ps2.fit();
 
-        ChordParameterization cp = new ChordParameterization(points);
+//        ChordParameterization cp = new ChordParameterization(points);
     }
 
     @Test

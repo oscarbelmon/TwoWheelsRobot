@@ -1,6 +1,7 @@
 package geometry;
 
 import algorithm.ChordParameterization;
+import algorithm.Parameterization;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,15 +11,16 @@ import java.util.List;
  */
 public class PointsStrip {
     private List<Point> points = new ArrayList<>();
-    private ChordParameterization cp;
+    private Parameterization parameterization;
 
     public PointsStrip() {
         super();
     }
 
-    public PointsStrip(List<Point> points) {
+    public PointsStrip(List<Point> points, Parameterization parameterization) {
         super();
         this.points = points;
+        this.parameterization = parameterization;
     }
 
     public List<Point> getPoints() {
@@ -38,7 +40,7 @@ public class PointsStrip {
     }
 
     public PointsStrip subList(int start, int end) {
-        return new PointsStrip(points.subList(start, end));
+        return new PointsStrip(points.subList(start, end), parameterization);
     }
 
     public void addAll(PointsStrip pointsStrip) {
@@ -69,7 +71,7 @@ public class PointsStrip {
         double c11 = 0;
         Vector tmp;
         for(Point point: points) {
-            tmp = a1(cp.getParameter(point));
+            tmp = a1(parameterization.getParameter(point));
             c11 += tmp.dotProduct(tmp);
         }
         return c11;
@@ -78,7 +80,7 @@ public class PointsStrip {
     private double c12() {
         double c12 = 0;
         for(Point point: points) {
-            c12 += a1(cp.getParameter(point)).dotProduct(a2(cp.getParameter(point)));
+            c12 += a1(parameterization.getParameter(point)).dotProduct(a2(parameterization.getParameter(point)));
         }
         return c12;
     }
@@ -91,7 +93,7 @@ public class PointsStrip {
         double c22 = 0;
         Vector tmp;
         for(Point point: points) {
-            tmp = a2(cp.getParameter(point));
+            tmp = a2(parameterization.getParameter(point));
             c22 += tmp.dotProduct(tmp);
         }
         return c22;
@@ -104,7 +106,7 @@ public class PointsStrip {
         Point p;
         double t;
         for(Point point: points) {
-            t = cp.getParameter(point);
+            t = parameterization.getParameter(point);
             B0 = (1-t)*(1-t)*(1-t);
             B1 = 3*t*(1-t)*(1-t);
             B2 = 3*t*t*(1-t);
@@ -126,7 +128,7 @@ public class PointsStrip {
         Point p;
         double t;
         for(Point point: points) {
-            t = cp.getParameter(point);
+            t = parameterization.getParameter(point);
             B0 = (1-t)*(1-t)*(1-t);
             B1 = 3*t*(1-t)*(1-t);
             B2 = 3*t*t*(1-t);
@@ -162,7 +164,7 @@ public class PointsStrip {
     }
 
     public CubicBezier fit() {
-        cp = new ChordParameterization(points);
+//        parameterization = new ChordParameterization(points);
         PointsStrip ps = new PointsStrip();
         ps.addPoint(points.get(0));
         Point p1 = points.get(0).sum(getTangentNormalizedAtStart().scale(alpha1()));

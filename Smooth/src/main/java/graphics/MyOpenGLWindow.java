@@ -58,7 +58,7 @@ public class MyOpenGLWindow extends OpenGLWindow {
         for(int i = 0; i < 21; i++) {
             points.add(cb.value((double)i/20.0));
         }
-        PointsStrip ps2 = new PointsStrip(points);
+        PointsStrip ps2 = new PointsStrip(points, new ChordParameterization(points));
         CubicBezier cb2 = ps2.fit();
         gl.glColor3d(1,0,0);
         bezier2(gl, cb2);
