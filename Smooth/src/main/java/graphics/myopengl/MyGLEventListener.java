@@ -25,7 +25,6 @@ public class MyGLEventListener implements GLEventListener {
 	@Override
 	public void init(GLAutoDrawable drawable) {
 		GL2 gl = drawable.getGL().getGL2();
-
 		gl.glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
 		window.init(gl);
 	}
@@ -37,7 +36,7 @@ public class MyGLEventListener implements GLEventListener {
 		gl.glMatrixMode(GL2.GL_PROJECTION);
 		
 		gl.glLoadIdentity();
-		gl.glOrtho(-width/2, width/2, -height/2, height/2, -1000, 1000);
+		gl.glOrtho(-width/2, width/2, -height/2, height/2, -1, 1);
 		gl.glMatrixMode(GL2.GL_MODELVIEW);
 		gl.glLoadIdentity();
 	}

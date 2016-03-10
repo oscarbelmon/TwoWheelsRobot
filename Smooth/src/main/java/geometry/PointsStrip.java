@@ -1,6 +1,7 @@
 package geometry;
 
 import algorithm.ChordParameterization;
+import algorithm.NewtonRaphsonParameterization;
 import algorithm.Parameterization;
 
 import java.util.ArrayList;
@@ -180,6 +181,15 @@ public class PointsStrip {
         PointsStrip ps1, ps2;
         List<Point> l1, l2;
         List<CubicBezier> fe1, fe2;
+        //
+//        System.out.println(fitError.totalError);
+        for(int i = 0; i < 10; i++) {
+            Parameterization parameterization = new NewtonRaphsonParameterization(this.parameterization, fitError.cb);
+            PointsStrip ps = new PointsStrip(points, parameterization);
+            fitError = ps.fitError();
+//            System.out.println(fitError.totalError);
+        }
+        //
         if(fitError.totalError > threshold) {
             l1 = points.subList(0, points.indexOf(fitError.worstFittedPoint)+1);
             ps1 = new PointsStrip(l1, new ChordParameterization(l1));
@@ -197,6 +207,11 @@ public class PointsStrip {
         double t, d = 0, dTmp, error = 0;
         Point onCurve, worstPoint = new Point();
         CubicBezier cb = fit();
+        //
+        Parameterization parameterization = new NewtonRaphsonParameterization(this.parameterization, cb);
+        PointsStrip ps = new PointsStrip(points, parameterization);
+        cb = ps.fit();
+        //
         for(Point point: points) {
             t = parameterization.getParameter(point);
             onCurve = cb.value(t);

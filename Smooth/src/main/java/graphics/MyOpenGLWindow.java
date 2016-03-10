@@ -24,7 +24,7 @@ import java.util.List;
 public class MyOpenGLWindow extends OpenGLWindow {
     private PointsStrip points = new PointsStrip();
     private int cnt = 0;
-    private CubicBezier cb = null;
+    private List<CubicBezier> cb = new ArrayList<>();
 
     public MyOpenGLWindow(String title) {
         super(title);
@@ -37,13 +37,15 @@ public class MyOpenGLWindow extends OpenGLWindow {
 //        renderAllPoints(gl);
 //        renderFilteredPoints(gl);
 //        renderTangents(gl);
-//        if(cb != null) bezier2(gl, cb);
+//        if(cb != null)
+        for(CubicBezier cubic: cb)
+            bezier2(gl, cubic);
 //        else {
 ////            bezier2(gl, model);
-//            renderAllPoints(gl);
+            renderAllPoints(gl);
 //        }
 //        coso(gl);
-        coso2(gl);
+//        coso2(gl);
         gl.glPopMatrix();
     }
 
@@ -221,12 +223,15 @@ public class MyOpenGLWindow extends OpenGLWindow {
         switch (keyEvent.getKeyCode()) {
             case KeyEvent.VK_ENTER :
                 points = new PointsStrip();
-                cb = null;
+                cb = new ArrayList<>();
                 break;
             case KeyEvent.VK_F :
                 Parameterization parameterization = new ChordParameterization(points.getPoints());
                 PointsStrip ps = new PointsStrip(points.getPoints(), parameterization);
-                cb = ps.fit();
+                cb = ps.fit(20);
+                System.out.println("Points: " + points.size());
+                System.out.println("Cubics: " + cb.size());
+                System.out.println("Points in cubics: " + ((cb.size()-1)*3+4));
 //                parameterization = new NewtonRaphsonParameterization(parameterization, cb);
 ////                System.out.println(cb);
 //                cb = new PointsStrip(points.getPoints(), parameterization).fit();
