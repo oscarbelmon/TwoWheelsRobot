@@ -182,23 +182,24 @@ public class PointsStrip {
         List<Point> l1, l2;
         List<CubicBezier> fe1, fe2;
         //
-//        System.out.println(fitError.totalError);
         for(int i = 0; i < 10; i++) {
             Parameterization parameterization = new NewtonRaphsonParameterization(this.parameterization, fitError.cb);
             PointsStrip ps = new PointsStrip(points, parameterization);
             fitError = ps.fitError();
-//            System.out.println(fitError.totalError);
         }
         //
         if(fitError.totalError > threshold) {
-            l1 = points.subList(0, points.indexOf(fitError.worstFittedPoint)+1);
-            ps1 = new PointsStrip(l1, new ChordParameterization(l1));
-            fe1 = ps1.fit(threshold);
-            l2 = points.subList(points.indexOf(fitError.worstFittedPoint)+1, points.size());
-            ps2 = new PointsStrip(l2, new ChordParameterization(l2));
-            fe2 = ps2.fit(threshold);
-            result.addAll(fe1);
-            result.addAll(fe2);
+            int index = points.indexOf(fitError.worstFittedPoint);
+            if(index > 2 && index < points.size() + 4) {
+                l1 = points.subList(0, points.indexOf(fitError.worstFittedPoint)+1);
+                ps1 = new PointsStrip(l1, new ChordParameterization(l1));
+                fe1 = ps1.fit(threshold);
+                l2 = points.subList(points.indexOf(fitError.worstFittedPoint)+1, points.size());
+                ps2 = new PointsStrip(l2, new ChordParameterization(l2));
+                fe2 = ps2.fit(threshold);
+                result.addAll(fe1);
+                result.addAll(fe2);
+            } else result.add(fitError.cb);
         } else result.add(fitError.cb);
         return result;
     }

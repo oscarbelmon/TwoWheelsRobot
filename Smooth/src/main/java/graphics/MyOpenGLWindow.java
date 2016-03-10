@@ -38,11 +38,17 @@ public class MyOpenGLWindow extends OpenGLWindow {
 //        renderFilteredPoints(gl);
 //        renderTangents(gl);
 //        if(cb != null)
-        for(CubicBezier cubic: cb)
-            bezier2(gl, cubic);
+        if(!cb.isEmpty()) {
+            gl.glColor3d(1, 0, 0);
+            for (CubicBezier cubic : cb)
+                bezier2(gl, cubic);
+        }
 //        else {
 ////            bezier2(gl, model);
+        else {
+            gl.glColor3d(0,1,0);
             renderAllPoints(gl);
+        }
 //        }
 //        coso(gl);
 //        coso2(gl);
@@ -139,7 +145,7 @@ public class MyOpenGLWindow extends OpenGLWindow {
     }
 
     private void renderAllPoints(GL2 gl) {
-        gl.glColor3d(0, 0, 0);
+//        gl.glColor3d(0, 0, 0);
         gl.glBegin(GL.GL_LINE_STRIP);
         for(Point point: points.getPoints())
             gl.glVertex2d(point.getX(), point.getY());
@@ -152,8 +158,6 @@ public class MyOpenGLWindow extends OpenGLWindow {
 
     @Override
     public void init(GL2 gl) {
-        gl.glEnable(GL2.GL_LINE_SMOOTH);
-        gl.glEnable(GL2.GL_DOUBLEBUFFER);
     }
 
     private void bezier(GL2 gl) {
