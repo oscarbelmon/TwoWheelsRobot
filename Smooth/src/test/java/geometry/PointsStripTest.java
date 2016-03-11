@@ -67,15 +67,15 @@ public class PointsStripTest {
         Parameterization parameterization = new ChordParameterization(points);
         PointsStrip ps2 = new PointsStrip(points, parameterization);
 //        CubicBezier cb2 = ps2.fit();
-        Point worst = ps2.worstPointFitted();
-        System.out.println(worst);
-        System.out.println(parameterization.getParameter(worst));
+//        Point worst = ps2.worstPointFitted();
+//        System.out.println(worst);
+//        System.out.println(parameterization.getParameter(worst));
 
         parameterization = new NewtonRaphsonParameterization(parameterization, ps2.fit());
         ps2 = new PointsStrip(points, parameterization);
-        worst = ps2.worstPointFitted();
-        System.out.println(worst);
-        System.out.println(parameterization.getParameter(worst));
+//        worst = ps2.worstPointFitted();
+//        System.out.println(worst);
+//        System.out.println(parameterization.getParameter(worst));
 
 //        ChordParameterization cp = new ChordParameterization(points);
 //        cp.showParameterization();

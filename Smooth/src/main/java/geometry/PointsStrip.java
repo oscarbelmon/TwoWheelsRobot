@@ -178,6 +178,11 @@ public class PointsStrip {
     public List<CubicBezier> fit(double threshold) {
         List<CubicBezier> result = new ArrayList<>();
         FitError fitError = fitError();
+        if (points.size() < 4) {
+            System.out.println("Corta");
+            result.add(fitError.cb);
+            return result;
+        }
         PointsStrip ps1, ps2;
         List<Point> l1, l2;
         List<CubicBezier> fe1, fe2;
@@ -189,17 +194,27 @@ public class PointsStrip {
         }
         //
         if(fitError.totalError > threshold) {
-            int index = points.indexOf(fitError.worstFittedPoint);
-            if(index > 2 && index < points.size() + 4) {
-                l1 = points.subList(0, points.indexOf(fitError.worstFittedPoint)+1);
+            int indexWorst = points.indexOf(fitError.worstFittedPoint);
+            if (points.size() > 6) {
+                if(indexWorst <= 2) indexWorst = 3;
+                else if(indexWorst + 4 >= points.size()) indexWorst = points.size()-5;
+            } else {
+                System.out.println("Corta 2" + fitError.totalError + ", " + threshold);
+                result.add(fitError.cb);
+            }
+//            if(indexWorst > 2 && indexWorst+4 < points.size()) {
+                l1 = points.subList(0, indexWorst+1);
                 ps1 = new PointsStrip(l1, new ChordParameterization(l1));
                 fe1 = ps1.fit(threshold);
-                l2 = points.subList(points.indexOf(fitError.worstFittedPoint)+1, points.size());
+                l2 = points.subList(indexWorst, points.size());
                 ps2 = new PointsStrip(l2, new ChordParameterization(l2));
                 fe2 = ps2.fit(threshold);
                 result.addAll(fe1);
                 result.addAll(fe2);
-            } else result.add(fitError.cb);
+//            } else {
+//                System.out.println("Corta 2" + fitError.totalError + ", " + threshold);
+//                result.add(fitError.cb);
+//            }
         } else result.add(fitError.cb);
         return result;
     }
@@ -226,22 +241,21 @@ public class PointsStrip {
         return new FitError(cb, d, error, worstPoint);
     }
 
-    public Point worstPointFitted() {
-        double t, d = 0, dTmp;
-        Point onCurve, result = new Point();
-        CubicBezier cb = fit();
-        for(Point point: points) {
-            t = parameterization.getParameter(point);
-            onCurve = cb.value(t);
-            dTmp = onCurve.distance(point);
-//            System.out.println("t: " + t + ", " + "d:" + dTmp);
-            if(d < dTmp) {
-                d = dTmp;
-                result = point;
-            }
-        }
-        return result;
-    }
+//    public Point worstPointFitted() {
+//        double t, d = 0, dTmp;
+//        Point onCurve, result = new Point();
+//        CubicBezier cb = fit();
+//        for(Point point: points) {
+//            t = parameterization.getParameter(point);
+//            onCurve = cb.value(t);
+//            dTmp = onCurve.distance(point);
+//            if(d < dTmp) {
+//                d = dTmp;
+//                result = point;
+//            }
+//        }
+//        return result;
+//    }
 
     private class FitError {
         CubicBezier cb;

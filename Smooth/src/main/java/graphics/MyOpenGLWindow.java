@@ -106,13 +106,23 @@ public class MyOpenGLWindow extends OpenGLWindow {
     }
 
     private void bezier2(GL2 gl, CubicBezier cb) {
-        gl.glBegin(GL2.GL_LINE_STRIP);
         Point p;
         double steps = 30.0;
+        gl.glColor3d(1, 0, 0);
+        gl.glBegin(GL2.GL_LINE_STRIP);
         for(int i = 0; i <= steps; i++) {
             p = cb.value(i/steps);
             gl.glVertex2d(p.getX(), p.getY());
         }
+        gl.glEnd();
+
+        gl.glPointSize(3);
+        gl.glColor3d(0, 0, 0);
+        gl.glBegin(GL.GL_POINTS);
+        p = cb.value(0);
+        gl.glVertex2d(p.getX(), p.getY());
+        p = cb.value(1);
+        gl.glVertex2d(p.getX(), p.getY());
         gl.glEnd();
 
         // Control points
@@ -240,6 +250,11 @@ public class MyOpenGLWindow extends OpenGLWindow {
 ////                System.out.println(cb);
 //                cb = new PointsStrip(points.getPoints(), parameterization).fit();
                 display();
+                break;
+            case KeyEvent.VK_S : // Show info
+                System.out.println(cb.size());
+                for(CubicBezier cubicBezier: cb)
+                    System.out.println(cubicBezier);
                 break;
         }
     }
