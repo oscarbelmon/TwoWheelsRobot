@@ -82,7 +82,7 @@ public class CubicBezier {
     @Override
     public String toString() {
         return "CubicBezier{" +
-                "points=" + points +
+                points +
                 '}';
     }
 }

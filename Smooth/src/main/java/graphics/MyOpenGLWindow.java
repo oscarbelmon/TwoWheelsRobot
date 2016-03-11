@@ -238,8 +238,10 @@ public class MyOpenGLWindow extends OpenGLWindow {
             case KeyEvent.VK_ENTER :
                 points = new PointsStrip();
                 cb = new ArrayList<>();
+                display();
                 break;
             case KeyEvent.VK_F :
+                points = points.removeDuplicates();
                 Parameterization parameterization = new ChordParameterization(points.getPoints());
                 PointsStrip ps = new PointsStrip(points.getPoints(), parameterization);
                 cb = ps.fit(20);

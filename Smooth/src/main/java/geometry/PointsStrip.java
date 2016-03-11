@@ -48,39 +48,47 @@ public class PointsStrip {
         points.addAll(pointsStrip.getPoints());
     }
 
+    public PointsStrip removeDuplicates() {
+        List<Point> whitoutDuplicates = new ArrayList<>();
+        for (Point point : points) {
+            if (whitoutDuplicates.contains(point) == false)
+                whitoutDuplicates.add(point);
+        }
+        return new PointsStrip(whitoutDuplicates, parameterization);
+    }
+
     public Vector getTangentNormalizedAtStart() {
         return new Vector(points.get(1), points.get(0)).normalize();
-//        return new Vector(1,0);
     }
 
     public Vector getTangentNormalizedAtEnd() {
-        return new Vector(points.get(points.size()-2), points.get(points.size()-1)).normalize();
-//        return new Vector(1,0);
+        return new Vector(points.get(points.size() - 2), points.get(points.size() - 1)).normalize();
     }
 
     private Vector a1(double t) {
-        double B1 = 3*t*(1-t)*(1-t);
+        double B1 = 3 * t * (1 - t) * (1 - t);
         return getTangentNormalizedAtStart().scale(B1);
     }
 
     private Vector a2(double t) {
-        double B2 = 3*t*t*(1-t);
+        double B2 = 3 * t * t * (1 - t);
         return getTangentNormalizedAtEnd().scale(B2);
     }
 
     private double c11() {
         double c11 = 0;
         Vector tmp;
-        for(Point point: points) {
+        for (Point point : points) {
             tmp = a1(parameterization.getParameter(point));
             c11 += tmp.dotProduct(tmp);
+            if (Double.isNaN(c11)) System.out.println("c11 is NaN in c11");
         }
         return c11;
     }
 
     private double c12() {
         double c12 = 0;
-        for(Point point: points) {
+        for (Point point : points) {
             c12 += a1(parameterization.getParameter(point)).dotProduct(a2(parameterization.getParameter(point)));
         }
         return c12;
@@ -93,7 +101,7 @@ public class PointsStrip {
     private double c22() {
         double c22 = 0;
         Vector tmp;
-        for(Point point: points) {
+        for (Point point : points) {
             tmp = a2(parameterization.getParameter(point));
             c22 += tmp.dotProduct(tmp);
         }
@@ -106,16 +114,16 @@ public class PointsStrip {
         double B0, B1, B2, B3;
         Point p;
         double t;
-        for(Point point: points) {
+        for (Point point : points) {
             t = parameterization.getParameter(point);
-            B0 = (1-t)*(1-t)*(1-t);
-            B1 = 3*t*(1-t)*(1-t);
-            B2 = 3*t*t*(1-t);
-            B3 = t*t*t;
+            B0 = (1 - t) * (1 - t) * (1 - t);
+            B1 = 3 * t * (1 - t) * (1 - t);
+            B2 = 3 * t * t * (1 - t);
+            B3 = t * t * t;
             p = points.get(0).scale(B0)
                     .sum(points.get(0).scale(B1))
-                    .sum(points.get(points.size()-1).scale(B2))
-                    .sum(points.get(points.size()-1).scale(B3));
+                    .sum(points.get(points.size() - 1).scale(B2))
+                    .sum(points.get(points.size() - 1).scale(B3));
             v = new Vector(point, p);
             x1 += v.dotProduct(a1(t));
         }
@@ -128,16 +136,16 @@ public class PointsStrip {
         double B0, B1, B2, B3;
         Point p;
         double t;
-        for(Point point: points) {
+        for (Point point : points) {
             t = parameterization.getParameter(point);
-            B0 = (1-t)*(1-t)*(1-t);
-            B1 = 3*t*(1-t)*(1-t);
-            B2 = 3*t*t*(1-t);
-            B3 = t*t*t;
+            B0 = (1 - t) * (1 - t) * (1 - t);
+            B1 = 3 * t * (1 - t) * (1 - t);
+            B2 = 3 * t * t * (1 - t);
+            B3 = t * t * t;
             p = points.get(0).scale(B0)
                     .sum(points.get(0).scale(B1))
-                    .sum(points.get(points.size()-1).scale(B2))
-                    .sum(points.get(points.size()-1).scale(B3));
+                    .sum(points.get(points.size() - 1).scale(B2))
+                    .sum(points.get(points.size() - 1).scale(B3));
             v = new Vector(point, p);
             x2 += v.dotProduct(a2(t));
         }
@@ -161,7 +169,12 @@ public class PointsStrip {
     }
 
     private double determinant(Vector v1, Vector v2) {
-        return v1.getVx()*v2.getVy() - v1.getVy()*v2.getVx();
+        double result = v1.getVx() * v2.getVy() - v1.getVy() * v2.getVx();
+        if (result == 0) {
+            result = 0.01;
+            System.out.println("error in determinant");
+        }
+        return result;
     }
 
     public CubicBezier fit() {
@@ -169,9 +182,9 @@ public class PointsStrip {
         ps.addPoint(points.get(0));
         Point p1 = points.get(0).sum(getTangentNormalizedAtStart().scale(alpha1()));
         ps.addPoint(p1);
-        Point p2 = points.get(points.size()-1).sum(getTangentNormalizedAtEnd().scale(alpha2()));
+        Point p2 = points.get(points.size() - 1).sum(getTangentNormalizedAtEnd().scale(alpha2()));
         ps.addPoint(p2);
-        ps.addPoint(points.get(points.size()-1));
+        ps.addPoint(points.get(points.size() - 1));
         return new CubicBezier(ps);
     }
 
@@ -187,23 +200,18 @@ public class PointsStrip {
         List<Point> l1, l2;
         List<CubicBezier> fe1, fe2;
         //
-        for(int i = 0; i < 10; i++) {
+        for (int i = 0; i < 10; i++) {
             Parameterization parameterization = new NewtonRaphsonParameterization(this.parameterization, fitError.cb);
             PointsStrip ps = new PointsStrip(points, parameterization);
             fitError = ps.fitError();
         }
         //
-        if(fitError.totalError > threshold) {
+        if (fitError.totalError > threshold) {
             int indexWorst = points.indexOf(fitError.worstFittedPoint);
             if (points.size() > 6) {
-                if(indexWorst <= 2) indexWorst = 3;
-                else if(indexWorst + 4 >= points.size()) indexWorst = points.size()-5;
-            } else {
-                System.out.println("Corta 2" + fitError.totalError + ", " + threshold);
-                result.add(fitError.cb);
-            }
-//            if(indexWorst > 2 && indexWorst+4 < points.size()) {
-                l1 = points.subList(0, indexWorst+1);
+                if (indexWorst <= 2) indexWorst = 3;
+                else if (indexWorst + 4 >= points.size()) indexWorst = points.size() - 5;
+                l1 = points.subList(0, indexWorst + 1);
                 ps1 = new PointsStrip(l1, new ChordParameterization(l1));
                 fe1 = ps1.fit(threshold);
                 l2 = points.subList(indexWorst, points.size());
@@ -211,11 +219,8 @@ public class PointsStrip {
                 fe2 = ps2.fit(threshold);
                 result.addAll(fe1);
                 result.addAll(fe2);
-//            } else {
-//                System.out.println("Corta 2" + fitError.totalError + ", " + threshold);
-//                result.add(fitError.cb);
-//            }
-        } else result.add(fitError.cb);
+            } else result.add(fitError.cb);
+        }  else result.add(fitError.cb);
         return result;
     }
 
@@ -228,34 +233,18 @@ public class PointsStrip {
         PointsStrip ps = new PointsStrip(points, parameterization);
         cb = ps.fit();
         //
-        for(Point point: points) {
+        for (Point point : points) {
             t = parameterization.getParameter(point);
             onCurve = cb.value(t);
             dTmp = onCurve.distance(point);
             error += dTmp;
-            if(d < dTmp) {
+            if (d < dTmp) {
                 d = dTmp;
                 worstPoint = point;
             }
         }
         return new FitError(cb, d, error, worstPoint);
     }
-
-//    public Point worstPointFitted() {
-//        double t, d = 0, dTmp;
-//        Point onCurve, result = new Point();
-//        CubicBezier cb = fit();
-//        for(Point point: points) {
-//            t = parameterization.getParameter(point);
-//            onCurve = cb.value(t);
-//            dTmp = onCurve.distance(point);
-//            if(d < dTmp) {
-//                d = dTmp;
-//                result = point;
-//            }
-//        }
-//        return result;
-//    }
 
     private class FitError {
         CubicBezier cb;
@@ -273,8 +262,6 @@ public class PointsStrip {
 
     @Override
     public String toString() {
-        return "PointsStrip{" +
-                "points=" + points +
-                '}';
+        return points.toString();
     }
 }

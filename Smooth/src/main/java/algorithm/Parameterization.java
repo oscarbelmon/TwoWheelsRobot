@@ -24,6 +24,7 @@ public abstract class Parameterization {
     }
 
     public double getParameter(Point p) {
+        if(parameterizedPoints.get(p) == null) System.out.println("Maaaaaaaal");
         return parameterizedPoints.get(p).doubleValue();
     }
 
