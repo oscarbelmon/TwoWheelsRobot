@@ -177,20 +177,22 @@ public class PointsStrip {
         return result;
     }
 
-    public CubicBezier fit() {
+    public CubicBezier fit(Vector tangentAtStart, Vector tangentAtEnd) {
         PointsStrip ps = new PointsStrip();
         ps.addPoint(points.get(0));
-        Point p1 = points.get(0).sum(getTangentNormalizedAtStart().scale(alpha1()));
+//        Point p1 = points.get(0).sum(getTangentNormalizedAtStart().scale(alpha1()));
+        Point p1 = points.get(0).sum(tangentAtStart.scale(alpha1()));
         ps.addPoint(p1);
-        Point p2 = points.get(points.size() - 1).sum(getTangentNormalizedAtEnd().scale(alpha2()));
+//        Point p2 = points.get(points.size() - 1).sum(getTangentNormalizedAtEnd().scale(alpha2()));
+        Point p2 = points.get(points.size() - 1).sum(tangentAtEnd.scale(alpha2()));
         ps.addPoint(p2);
         ps.addPoint(points.get(points.size() - 1));
         return new CubicBezier(ps);
     }
 
-    public List<CubicBezier> fit(double threshold) {
+    public List<CubicBezier> fit(double threshold, Vector tangetAtStart, Vector tangentAtEnd) {
         List<CubicBezier> result = new ArrayList<>();
-        FitError fitError = fitError();
+        FitError fitError = fitError(tangetAtStart, tangentAtEnd);
         if (points.size() < 4) {
             System.out.println("Corta");
             result.add(fitError.cb);
@@ -203,7 +205,7 @@ public class PointsStrip {
         for (int i = 0; i < 10; i++) {
             Parameterization parameterization = new NewtonRaphsonParameterization(this.parameterization, fitError.cb);
             PointsStrip ps = new PointsStrip(points, parameterization);
-            fitError = ps.fitError();
+            fitError = ps.fitError(tangetAtStart, tangentAtEnd);
         }
         //
         if (fitError.totalError > threshold) {
@@ -211,12 +213,13 @@ public class PointsStrip {
             if (points.size() > 6) {
                 if (indexWorst <= 2) indexWorst = 3;
                 else if (indexWorst + 4 >= points.size()) indexWorst = points.size() - 5;
+                Vector tangent = new Vector(points.get(indexWorst+1), points.get(indexWorst-1)).normalize();
                 l1 = points.subList(0, indexWorst + 1);
                 ps1 = new PointsStrip(l1, new ChordParameterization(l1));
-                fe1 = ps1.fit(threshold);
+                fe1 = ps1.fit(threshold, tangetAtStart, tangent.scale(-1));
                 l2 = points.subList(indexWorst, points.size());
                 ps2 = new PointsStrip(l2, new ChordParameterization(l2));
-                fe2 = ps2.fit(threshold);
+                fe2 = ps2.fit(threshold, tangent, tangentAtEnd);
                 result.addAll(fe1);
                 result.addAll(fe2);
             } else result.add(fitError.cb);
@@ -224,14 +227,14 @@ public class PointsStrip {
         return result;
     }
 
-    public FitError fitError() {
+    public FitError fitError(Vector tangentAtStart, Vector tangentAtEnd) {
         double t, d = 0, dTmp, error = 0;
         Point onCurve, worstPoint = new Point();
-        CubicBezier cb = fit();
+        CubicBezier cb = fit(tangentAtStart, tangentAtEnd);
         //
         Parameterization parameterization = new NewtonRaphsonParameterization(this.parameterization, cb);
         PointsStrip ps = new PointsStrip(points, parameterization);
-        cb = ps.fit();
+        cb = ps.fit(tangentAtStart, tangentAtEnd);
         //
         for (Point point : points) {
             t = parameterization.getParameter(point);

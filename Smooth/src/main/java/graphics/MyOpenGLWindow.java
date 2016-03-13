@@ -72,7 +72,8 @@ public class MyOpenGLWindow extends OpenGLWindow {
 
         Parameterization parameterization = new ChordParameterization(points);
         PointsStrip ps2 = new PointsStrip(points, parameterization);
-        List<CubicBezier> cubics = ps2.fit(10);
+        List<CubicBezier> cubics = ps2.fit(10, new Vector(points.get(1), points.get(0)),
+                new Vector(points.get(points.size()-1), points.get(points.size()-2)));
         gl.glColor3d(1,0,0);
         for(CubicBezier cubic: cubics)
             bezier2(gl, cubic);
@@ -94,12 +95,12 @@ public class MyOpenGLWindow extends OpenGLWindow {
         }
         Parameterization parameterization = new ChordParameterization(points);
         PointsStrip ps2 = new PointsStrip(points, parameterization);
-        CubicBezier cb2 = ps2.fit();
+        CubicBezier cb2 = ps2.fit(new Vector(points.get(1), points.get(0)), new Vector(points.get(points.size()-1), points.get(points.size()-2)));
         gl.glColor3d(1,0,0);
         bezier2(gl, cb2);
 
         PointsStrip ps3 = new PointsStrip(points, new NewtonRaphsonParameterization(parameterization, cb2));
-        CubicBezier cb3 = ps3.fit();
+        CubicBezier cb3 = ps3.fit(new Vector(points.get(1), points.get(0)), new Vector(points.get(points.size()-1), points.get(points.size()-2)));
         gl.glColor3d(0,0,1);
         bezier2(gl, cb3);
 
@@ -123,6 +124,20 @@ public class MyOpenGLWindow extends OpenGLWindow {
         gl.glVertex2d(p.getX(), p.getY());
         p = cb.value(1);
         gl.glVertex2d(p.getX(), p.getY());
+        gl.glEnd();
+
+        gl.glColor3d(0, 0, 1);
+        gl.glBegin(GL2.GL_LINES);
+        Point start = cb.value(0);
+        Vector vector = cb.firstDerivative(0).normalize().scale(20);
+        Point end = start.sum(vector);
+        gl.glVertex2d(start.getX(), start.getY());
+        gl.glVertex2d(end.getX(), end.getY());
+        start = cb.value(1);
+        vector = cb.firstDerivative(1).normalize().scale(-20);
+        end = start.sum(vector);
+        gl.glVertex2d(start.getX(), start.getY());
+        gl.glVertex2d(end.getX(), end.getY());
         gl.glEnd();
 
         // Control points
@@ -244,7 +259,7 @@ public class MyOpenGLWindow extends OpenGLWindow {
                 points = points.removeDuplicates();
                 Parameterization parameterization = new ChordParameterization(points.getPoints());
                 PointsStrip ps = new PointsStrip(points.getPoints(), parameterization);
-                cb = ps.fit(20);
+                cb = ps.fit(20, new Vector(points.get(1), points.get(0)).normalize(), new Vector(points.get(points.size()-1), points.get(points.size()-2)).normalize());
                 System.out.println("Points: " + points.size());
                 System.out.println("Cubics: " + cb.size());
                 System.out.println("Points in cubics: " + ((cb.size()-1)*3+4));

@@ -26,7 +26,7 @@ public class PointsStripTest {
             points.add(cb.value(i/20.0));
         }
         PointsStrip ps2 = new PointsStrip(points, new ChordParameterization(points));
-        CubicBezier cb2 = ps2.fit();
+        CubicBezier cb2 = ps2.fit(new Vector(points.get(1), points.get(0)), new Vector(points.get(points.size()-1), points.get(points.size()-2)));
 
 //        ChordParameterization cp = new ChordParameterization(points);
     }
@@ -71,7 +71,7 @@ public class PointsStripTest {
 //        System.out.println(worst);
 //        System.out.println(parameterization.getParameter(worst));
 
-        parameterization = new NewtonRaphsonParameterization(parameterization, ps2.fit());
+        parameterization = new NewtonRaphsonParameterization(parameterization, ps2.fit(new Vector(points.get(1), points.get(0)), new Vector(points.get(points.size()-1), points.get(points.size()-2))));
         ps2 = new PointsStrip(points, parameterization);
 //        worst = ps2.worstPointFitted();
 //        System.out.println(worst);
@@ -98,7 +98,7 @@ public class PointsStripTest {
 
         Parameterization parameterization = new ChordParameterization(points);
         PointsStrip ps2 = new PointsStrip(points, parameterization);
-        List<CubicBezier> cubics = ps2.fit(1000);
+        List<CubicBezier> cubics = ps2.fit(1000, new Vector(points.get(1), points.get(0)), new Vector(points.get(points.size()-1), points.get(points.size()-2)));
         for(CubicBezier cubic: cubics)
             System.out.println(cubic);
     }
