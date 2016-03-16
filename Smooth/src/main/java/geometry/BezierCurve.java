@@ -52,6 +52,13 @@ public class BezierCurve {
         }
     }
 
+    public PolynomialFunction module2() {
+        PolynomialFunction resultX = px.multiply(px);
+        PolynomialFunction resultY = py.multiply(py);
+        PolynomialFunction result = resultX.add(resultY);
+        return result;
+    }
+
     public Vector2D value(double t) {
         return new Vector2D(px.value(t), py.value(t));
     }

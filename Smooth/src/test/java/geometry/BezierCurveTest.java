@@ -1,25 +1,88 @@
 package geometry;
 
+import org.apache.commons.math3.analysis.DifferentiableUnivariateFunction;
+import org.apache.commons.math3.analysis.UnivariateFunction;
+import org.apache.commons.math3.analysis.function.Sqrt;
+import org.apache.commons.math3.analysis.integration.RombergIntegrator;
+import org.apache.commons.math3.analysis.polynomials.PolynomialFunction;
+import org.apache.commons.math3.analysis.solvers.LaguerreSolver;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
-import static org.hamcrest.number.IsCloseTo.*;
+import static org.hamcrest.number.IsCloseTo.closeTo;
+import static org.junit.Assert.assertThat;
 /**
  * Created by oscar on 16/03/16.
  */
 public class BezierCurveTest {
-    @Test
-    public void lengthTest() {
+    private static BezierCurve bc;
+
+    @BeforeClass
+    public static void init() {
         List<Vector2D> poiints = new ArrayList<>();
         poiints.add(new Vector2D(120, 160));
         poiints.add(new Vector2D(35, 200));
         poiints.add(new Vector2D(220, 260));
         poiints.add(new Vector2D(220, 40));
-        BezierCurve bc = new BezierCurve(poiints);
+        bc = new BezierCurve(poiints);
+    }
+    @Test
+    public void lengthTest() {
         assertThat(bc.getLength(), closeTo(272.87, 0.01));
+    }
+
+    @Test
+    public void test() {
+        LaguerreSolver solver = new LaguerreSolver();
+        PolynomialFunction p = new PolynomialFunction(new double[]{-0.25, 0, 1});
+        System.out.println(solver.solve(1000, p, -1, 1));
+    }
+
+    @Test
+    public void test2() {
+//        PolynomialFunction p = bc.;
+//        System.out.println(p.negate());
+    }
+
+    @Test
+    public void test3() {
+        PolynomialFunction p = new PolynomialFunction(new double[]{1,-1,1});
+        Sqrt sqrt = new Sqrt();
+        System.out.println(sqrt.derivative());
+    }
+
+    @Test
+    public void test4() {
+        RombergIntegrator integrator = new RombergIntegrator();
+        System.out.println(integrator.integrate(1000000, new Funcion(), 0, 1));
+//        System.out.println(integrator.integrate(1000000, new Derivada(), 0, 1));
+    }
+
+    @Test
+    public void test5() {
+    }
+
+    private class Funcion implements DifferentiableUnivariateFunction {
+        @Override
+        public double value(double v) {
+            return Math.sqrt(v);
+        }
+
+        @Override
+        public UnivariateFunction derivative() {
+            return new Derivada();
+        }
+    }
+
+    private class Derivada implements UnivariateFunction {
+
+        @Override
+        public double value(double v) {
+            return 1/Math.sqrt(v);
+        }
     }
 }
