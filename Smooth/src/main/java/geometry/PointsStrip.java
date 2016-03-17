@@ -177,7 +177,7 @@ public class PointsStrip {
         return result;
     }
 
-    public CubicBezier fit(Vector tangentAtStart, Vector tangentAtEnd) {
+    private CubicBezier fit(Vector tangentAtStart, Vector tangentAtEnd) {
         PointsStrip ps = new PointsStrip();
         ps.addPoint(points.get(0));
 //        Point p1 = points.get(0).sum(getTangentNormalizedAtStart().scale(alpha1()));
@@ -227,7 +227,7 @@ public class PointsStrip {
         return result;
     }
 
-    public FitError fitError(Vector tangentAtStart, Vector tangentAtEnd) {
+    private FitError fitError(Vector tangentAtStart, Vector tangentAtEnd) {
         double t, d = 0, dTmp, error = 0;
         Point onCurve, worstPoint = new Point();
         CubicBezier cb = fit(tangentAtStart, tangentAtEnd);
