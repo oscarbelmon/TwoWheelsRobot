@@ -16,18 +16,12 @@ public class PointsStripTest {
     @Test
     public void test2() {
         PointsStrip ps = new PointsStrip();
-//        ps.addPoint(new Point(-100, 100));
-//        ps.addPoint(new Point(-100, 100));
-//        ps.addPoint(new Point(100, 100));
-//        ps.addPoint(new Point(100, -100));
-//        ps.addPoint(new Point(-100, -100));
         ps.addPoint(new Vector2D(-100, 100));
         ps.addPoint(new Vector2D(100, 100));
         ps.addPoint(new Vector2D(100, -100));
         ps.addPoint(new Vector2D(-100, -100));
         CubicBezier cb = new CubicBezier(ps);
 
-//        List<Point> points = new ArrayList<>();
         List<Vector2D> points = new ArrayList<>();
         for(int i = 0; i < 21; i++) {
             points.add(cb.value(i/20.0));
@@ -41,17 +35,12 @@ public class PointsStripTest {
     @Test
     public void test4() {
         PointsStrip ps = new PointsStrip();
-//        ps.addPoint(new Point(-100, 100));
-//        ps.addPoint(new Point(100, 100));
-//        ps.addPoint(new Point(100, -100));
-//        ps.addPoint(new Point(-100, -100));
         ps.addPoint(new Vector2D(-100, 100));
         ps.addPoint(new Vector2D(100, 100));
         ps.addPoint(new Vector2D(100, -100));
         ps.addPoint(new Vector2D(-100, -100));
         CubicBezier cb = new CubicBezier(ps);
 
-//        List<Point> points = new ArrayList<>();
         List<Vector2D> points = new ArrayList<>();
         for(int i = 0; i < 21; i++) {
             points.add(cb.value(i/20.0));

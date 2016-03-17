@@ -11,7 +11,6 @@ import java.util.Map;
  * Created by oscar on 6/03/16.
  */
 public class ChordParameterization extends Parameterization {
-//    public ChordParameterization(List<Point> points) {
     public ChordParameterization(List<Vector2D> points) {
         super(points);
         this.points = points;
@@ -29,7 +28,6 @@ public class ChordParameterization extends Parameterization {
         }
     }
 
-//    private double totalLength(List<Point> points) {
     private double totalLength(List<Vector2D> points) {
         double length = 0;
         for(int i = points.size()-1; i > 0; i--)

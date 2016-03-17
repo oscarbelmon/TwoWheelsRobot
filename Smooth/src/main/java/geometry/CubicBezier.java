@@ -9,11 +9,6 @@ import java.util.List;
  */
 public class CubicBezier {
     private PointsStrip points;
-//    private Vector V2_V1;
-//    private Vector V1_V0;
-//    private Vector V3_V2;
-//    private Vector V0_2V1V2;
-//    private Vector V1_2V2V3;
     private Vector2D V2_V1;
     private Vector2D V1_V0;
     private Vector2D V3_V2;
@@ -24,13 +19,6 @@ public class CubicBezier {
         super();
         if(points.size() != 4) throw new IllegalArgumentException("The number of points must be 4");
         this.points = points;
-//        V2_V1 = new Vector(points.get(2), points.get(1));
-//        V1_V0 = new Vector(points.get(1), points.get(0));
-//        V3_V2 = new Vector(points.get(3), points.get(2));
-//        V0_2V1V2 = new Vector(points.get(0), points.get(1))
-//                .sum(new Vector(points.get(2), points.get(1)));
-//        V1_2V2V3 = new Vector(points.get(1), points.get(2))
-//                .sum(new Vector(points.get(3), points.get(2)));
         V2_V1 = points.get(2).subtract(points.get(1));
         V1_V0 = points.get(1).subtract(points.get(0));
         V3_V2 = points.get(3).subtract(points.get(2));
@@ -40,56 +28,38 @@ public class CubicBezier {
                 .add(points.get(3).subtract(points.get(2)));
     }
 
-//    public Point value(double t) {
     public Vector2D value(double t) {
         double B0 = (1-t)*(1-t)*(1-t);
         double B1 = 3*t*(1-t)*(1-t);
         double B2 = 3*t*t*(1-t);
         double B3 = t*t*t;
-//        return points.get(0).scale(B0)
-//                .sum(points.get(1).scale(B1))
-//                .sum(points.get(2).scale(B2))
-//                .sum(points.get(3).scale(B3));
         return points.get(0).scalarMultiply(B0)
                 .add(points.get(1).scalarMultiply(B1))
                 .add(points.get(2).scalarMultiply(B2))
                 .add(points.get(3).scalarMultiply(B3));
     }
 
-//    public Vector firstDerivative(double t) {
     public Vector2D firstDerivative(double t) {
         double B0 = (1-t)*(1-t);
         double B1 = 2*t*(1-t);
         double B2 = t*t;
-//        return V1_V0.scale(B0)
-//                .sum(V2_V1.scale(B1))
-//                .sum(V3_V2.scale(B2))
-//                .scale(3);
         return V1_V0.scalarMultiply(B0)
                 .add(V2_V1.scalarMultiply(B1))
                 .add(V3_V2.scalarMultiply(B2))
                 .scalarMultiply(3);
     }
 
-//    public Vector secondDerivative(double t) {
     public Vector2D secondDerivative(double t) {
         double B0 = 1-t;
         double B1 = t;
-//        return V0_2V1V2.scale(B0)
-//                .sum(V1_2V2V3.scale(B1))
-//                .scale(6);
         return V0_2V1V2.scalarMultiply(B0)
                 .add(V1_2V2V3.scalarMultiply(B1))
                 .scalarMultiply(6);
     }
 
     public double curvature(double t) {
-//        Vector vp = firstDerivative(t);
-//        Vector vpp = secondDerivative(t);
         Vector2D vp = firstDerivative(t);
         Vector2D vpp = secondDerivative(t);
-//        double numerator = vp.crossProductZ(vpp);
-//        double denominator = Math.pow(vp.module(), 3);
         double numerator = vp.crossProduct(vp, vpp);
         double denominator = Math.pow(vp.getNorm(), 3);
         return numerator/denominator;
@@ -99,20 +69,14 @@ public class CubicBezier {
         return 1/curvature(t);
     }
 
-//    public Point curvatureCenter(double t) {
     public Vector2D curvatureCenter(double t) {
-//        Vector vp = firstDerivative(t);
         Vector2D vp = firstDerivative(t);
         double curvatureRadius = curvatureRadius(t);
-//        Vector vpPerpendicular = vp.perpendicular().normalize().scale(-curvatureRadius);
         Vector2D vpPerpendicular = new Vector2D(vp.getY(), vp.getX()).normalize().scalarMultiply(-curvatureRadius);
-//        Point p = value(t);
         Vector2D p = value(t);
-//        return p.sum(vpPerpendicular);
         return p.add(vpPerpendicular);
     }
 
-//    public Point getPoint(int index) {
     public Vector2D getPoint(int index) {
         return points.getPoints().get(index);
     }

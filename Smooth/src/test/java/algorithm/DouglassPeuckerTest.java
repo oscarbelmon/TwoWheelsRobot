@@ -17,17 +17,6 @@ import static org.hamcrest.core.Is.*;
 public class DouglassPeuckerTest {
     @Test
     public void test1() {
-//        List<Point> points = new ArrayList<>();
-//        points.add(new Point());
-//        points.add(new Point(5,5));
-//        points.add(new Point(9,3));
-//        points.add(new Point(12,2));
-//        points.add(new Point(14,4));
-//        points.add(new Point(18,3));
-//        points.add(new Point(22,-2));
-//        points.add(new Point(29,8));
-//        points.add(new Point(32,3));
-//        points.add(new Point(37,3));
         PointsStrip points = new PointsStrip();
         points.addPoint(new Vector2D(0,0));
         points.addPoint(new Vector2D(5,5));
@@ -42,10 +31,7 @@ public class DouglassPeuckerTest {
 
 
         DouglassPeucker douglassPeucker = new DouglassPeucker(points);
-//        List<Point> result = douglassPeucker.simplify(6);
         PointsStrip result = douglassPeucker.simplify(6);
-//        for(Point p: result)
-//            System.out.println(p);
         assertThat(result.size(), is(2));
 
         result = douglassPeucker.simplify(0.01);

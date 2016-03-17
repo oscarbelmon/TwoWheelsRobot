@@ -13,22 +13,6 @@ import java.util.List;
 public class ChordParameterizationTest {
     @Test
     public void test1() {
-//        List<Point> points = new ArrayList<>();
-//        points.add(new Point(0,0));
-//        points.add(new Point(1,0));
-//        points.add(new Point(2,0));
-//        points.add(new Point(3,0));
-//        points.add(new Point(4,0));
-//        points.add(new Point(5,0));
-//        points.add(new Point(6,0));
-//        ChordParameterization cp = new ChordParameterization(points);
-//        System.out.println(cp.getParameter(new Point(0,0)));
-//        System.out.println(cp.getParameter(new Point(1,0)));
-//        System.out.println(cp.getParameter(new Point(2,0)));
-//        System.out.println(cp.getParameter(new Point(3,0)));
-//        System.out.println(cp.getParameter(new Point(4,0)));
-//        System.out.println(cp.getParameter(new Point(5,0)));
-//        System.out.println(cp.getParameter(new Point(6,0)));
         List<Vector2D> points = new ArrayList<>();
         points.add(new Vector2D(0,0));
         points.add(new Vector2D(1,0));
