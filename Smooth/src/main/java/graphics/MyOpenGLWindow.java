@@ -23,7 +23,6 @@ public class MyOpenGLWindow extends OpenGLWindow {
     private PointsStrip pointsStrip = new PointsStrip();
     private int cnt = 0;
     private List<CubicBezier> cubics = new ArrayList<>();
-    private BezierCurve bc;
 
     public MyOpenGLWindow(String title) {
         super(title);
@@ -32,23 +31,23 @@ public class MyOpenGLWindow extends OpenGLWindow {
     @Override
     public void render(GL2 gl) {
         gl.glPushMatrix();
-        if(cnt == 4) bezier(gl);
+//        if(cnt == 4) bezier(gl);
 //        renderAllPoints(gl);
 //        renderFilteredPoints(gl);
 //        renderTangents(gl);
 //        if(cubics != null)
-//        if(!cubics.isEmpty()) {
-//            gl.glColor3d(1, 0, 0);
-//            for (CubicBezier cubic : cubics)
-//                bezier2(gl, cubic);
-//            bezierS(gl);
-//        }
+        if(!cubics.isEmpty()) {
+            gl.glColor3d(1, 0, 0);
+            for (CubicBezier cubic : cubics)
+                bezier2(gl, cubic);
+            bezierS(gl);
+        }
 //        else {
 ////            bezier2(gl, model);
-//        else {
-//            gl.glColor3d(0,1,0);
-//            renderAllPoints(gl);
-//        }
+        else {
+            gl.glColor3d(0,1,0);
+            renderAllPoints(gl);
+        }
 //        }
 //        coso(gl);
 //        coso2(gl);
@@ -59,11 +58,12 @@ public class MyOpenGLWindow extends OpenGLWindow {
         gl.glColor3d(0,1,0);
         gl.glPointSize(3);
         gl.glBegin(GL2.GL_POINTS);
+        BezierCurve bc = cubics.get(0);
         double inverse, length = bc.getLength();
         Vector2D point;
         for(int i = 0; i <= 10; i++) {
             inverse = bc.inverse(i/10.*length);
-            System.out.println(inverse);
+//            System.out.println(inverse);
             point = bc.value(inverse);
             gl.glVertex2d(point.getX(), point.getY());
         }
@@ -205,20 +205,18 @@ public class MyOpenGLWindow extends OpenGLWindow {
 
     }
 
-    @Override
-    public void mousePressed(MouseEvent e) {
-        int x = e.getX() - getWidth() / 2;
-        int y = getHeight() / 2 - e.getY();
-//        pointsStrip.add(new Point(x, y));
-        pointsStrip.addPoint(new Vector2D(x, y));
-        cnt++;
-        if (cnt == 4) {
-            display();
-//            pointsStrip = new ArrayList<>();
-            pointsStrip = new PointsStrip();
-            cnt = 0;
-        }
-    }
+//    @Override
+//    public void mousePressed(MouseEvent e) {
+//        int x = e.getX() - getWidth() / 2;
+//        int y = getHeight() / 2 - e.getY();
+//        pointsStrip.addPoint(new Vector2D(x, y));
+//        cnt++;
+//        if (cnt == 4) {
+//            display();
+//            pointsStrip = new PointsStrip();
+//            cnt = 0;
+//        }
+//    }
 
 
     @Override
@@ -247,12 +245,12 @@ public class MyOpenGLWindow extends OpenGLWindow {
                 System.out.println("Cubics: " + cubics.size());
                 System.out.println("Points in cubics: " + ((cubics.size()-1)*3+4));
                 CubicBezier cb = cubics.get(0);
+//                System.out.println(cb.getLength());
                 List<Vector2D> vectors = new ArrayList<>();
                 for(int i = 0; i < 4; i++) {
                     Vector2D point = cb.getPoint(i);
                     vectors.add(new Vector2D(point.getX(), point.getY()));
                 }
-                bc = new BezierCurve(vectors);
                 display();
                 break;
             case KeyEvent.VK_S : // Show info

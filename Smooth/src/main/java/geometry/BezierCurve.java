@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Created by oscar on 15/03/16.
  */
-public class BezierCurve {
+public abstract class BezierCurve {
     private List<Vector2D> points;
     private PolynomialFunction px;
     private PolynomialFunction py;
@@ -26,7 +26,7 @@ public class BezierCurve {
 
     private double calculateLength() {
         RombergIntegrator ri = new RombergIntegrator();
-        return ri.integrate(1000, this::derivatives, 0, 1);
+        return ri.integrate(10000, this::derivatives, 0, 1);
     }
 
     private double derivatives(double t) {
@@ -34,6 +34,12 @@ public class BezierCurve {
         double dpy = py.derivative().value(t);
         return Math.sqrt(dpx*dpx + dpy*dpy);
     }
+
+    public Vector2D firstDerivative(double t) {
+        return new Vector2D(px.derivative().value(t), py.derivative().value(t));
+    }
+
+    public abstract Vector2D secondDerivative(double t);
 
     public double getLength() {
         return length;
@@ -96,4 +102,29 @@ public class BezierCurve {
         }
         return t;
     }
+
+    public double curvature(double t) {
+        Vector2D vp = firstDerivative(t);
+        Vector2D vpp = secondDerivative(t);
+        double numerator = vp.getX() * vpp.getY() - vp.getY() * vpp.getX();
+        double denominator = Math.pow(vp.getNorm(), 3);
+        return numerator/denominator;
+    }
+
+    public double curvatureRadius(double t) {
+        return 1/curvature(t);
+    }
+
+    public Vector2D curvatureCenter(double t) {
+        Vector2D vp = firstDerivative(t);
+        double curvatureRadius = curvatureRadius(t);
+        Vector2D vpPerpendicular = new Vector2D(vp.getY(), -vp.getX()).normalize().scalarMultiply(-curvatureRadius);
+        Vector2D p = value(t);
+        return p.add(vpPerpendicular);
+    }
+
+    public Vector2D getPoint(int index) {
+        return points.get(index);
+    }
+
 }
