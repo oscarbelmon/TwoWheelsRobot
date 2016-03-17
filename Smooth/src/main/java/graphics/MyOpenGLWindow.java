@@ -168,6 +168,7 @@ public class MyOpenGLWindow extends OpenGLWindow {
     private void bezier(GL2 gl) {
         CubicBezier cb = new CubicBezier(pointsStrip);
         double curvatureRadius = cb.curvatureRadius(0.5);
+        System.out.println(curvatureRadius);
         Vector2D center = cb.curvatureCenter(0.5);
         GLUT glut = new GLUT();
         gl.glColor3d(0,0,0);
@@ -203,6 +204,22 @@ public class MyOpenGLWindow extends OpenGLWindow {
 
 
     }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        int x = e.getX() - getWidth() / 2;
+        int y = getHeight() / 2 - e.getY();
+//        pointsStrip.add(new Point(x, y));
+        pointsStrip.addPoint(new Vector2D(x, y));
+        cnt++;
+        if (cnt == 4) {
+            display();
+//            pointsStrip = new ArrayList<>();
+            pointsStrip = new PointsStrip();
+            cnt = 0;
+        }
+    }
+
 
     @Override
     public void mouseDragged(MouseEvent e) {
