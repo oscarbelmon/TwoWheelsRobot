@@ -1,12 +1,8 @@
 package algorithm;
 
-import geometry.Point;
 import geometry.PointsStrip;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.Assert.*;
 import static org.hamcrest.core.Is.*;

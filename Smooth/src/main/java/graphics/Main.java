@@ -1,9 +1,5 @@
 package graphics;
 
-import geometry.CubicBezier;
-import geometry.Point;
-import geometry.PointsStrip;
-
 /**
  * Created by oscar on 12/2/16.
  */

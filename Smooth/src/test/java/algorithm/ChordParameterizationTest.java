@@ -1,6 +1,5 @@
 package algorithm;
 
-import geometry.Point;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.junit.Test;
 

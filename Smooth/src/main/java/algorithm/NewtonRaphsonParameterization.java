@@ -1,8 +1,6 @@
 package algorithm;
 
 import geometry.CubicBezier;
-import geometry.Point;
-import geometry.Vector;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 /**
