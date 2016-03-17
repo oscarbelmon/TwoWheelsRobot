@@ -94,33 +94,6 @@ public class MyOpenGLWindow extends OpenGLWindow {
             bezier2(gl, cubic);
     }
 
-    private void coso(GL2 gl) {
-        PointsStrip ps = new PointsStrip();
-        ps.addPoint(new Point(-100, 100));
-        ps.addPoint(new Point(100, 100));
-        ps.addPoint(new Point(100, -100));
-        ps.addPoint(new Point(-100, -100));
-        CubicBezier cb = new CubicBezier(ps);
-        gl.glColor3d(0,1,0);
-        bezier2(gl, cb);
-
-        List<Point> points = new ArrayList<>();
-        for(int i = 0; i < 21; i++) {
-            points.add(cb.value((double)i/20.0));
-        }
-        Parameterization parameterization = new ChordParameterization(points);
-        PointsStrip ps2 = new PointsStrip(points, parameterization);
-        CubicBezier cb2 = ps2.fit(new Vector(points.get(1), points.get(0)), new Vector(points.get(points.size()-1), points.get(points.size()-2)));
-        gl.glColor3d(1,0,0);
-        bezier2(gl, cb2);
-
-        PointsStrip ps3 = new PointsStrip(points, new NewtonRaphsonParameterization(parameterization, cb2));
-        CubicBezier cb3 = ps3.fit(new Vector(points.get(1), points.get(0)), new Vector(points.get(points.size()-1), points.get(points.size()-2)));
-        gl.glColor3d(0,0,1);
-        bezier2(gl, cb3);
-
-    }
-
     private void bezier2(GL2 gl, CubicBezier cb) {
         Point p;
         double steps = 30.0;
