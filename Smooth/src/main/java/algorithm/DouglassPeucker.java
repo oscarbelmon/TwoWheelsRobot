@@ -1,11 +1,7 @@
 package algorithm;
 
 import geometry.Line;
-import geometry.Point;
 import geometry.PointsStrip;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by oscar on 4/03/16.

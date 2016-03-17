@@ -3,6 +3,7 @@ package geometry;
 import algorithm.ChordParameterization;
 import algorithm.NewtonRaphsonParameterization;
 import algorithm.Parameterization;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -15,13 +16,13 @@ public class PointsStripTest {
     @Test
     public void test2() {
         PointsStrip ps = new PointsStrip();
-        ps.addPoint(new Point(-100, 100));
-        ps.addPoint(new Point(100, 100));
-        ps.addPoint(new Point(100, -100));
-        ps.addPoint(new Point(-100, -100));
+        ps.addPoint(new Vector2D(-100, 100));
+        ps.addPoint(new Vector2D(100, 100));
+        ps.addPoint(new Vector2D(100, -100));
+        ps.addPoint(new Vector2D(-100, -100));
         CubicBezier cb = new CubicBezier(ps);
 
-        List<Point> points = new ArrayList<>();
+        List<Vector2D> points = new ArrayList<>();
         for(int i = 0; i < 21; i++) {
             points.add(cb.value(i/20.0));
         }
@@ -34,20 +35,20 @@ public class PointsStripTest {
     @Test
     public void test4() {
         PointsStrip ps = new PointsStrip();
-        ps.addPoint(new Point(-100, 100));
-        ps.addPoint(new Point(100, 100));
-        ps.addPoint(new Point(100, -100));
-        ps.addPoint(new Point(-100, -100));
+        ps.addPoint(new Vector2D(-100, 100));
+        ps.addPoint(new Vector2D(100, 100));
+        ps.addPoint(new Vector2D(100, -100));
+        ps.addPoint(new Vector2D(-100, -100));
         CubicBezier cb = new CubicBezier(ps);
 
-        List<Point> points = new ArrayList<>();
+        List<Vector2D> points = new ArrayList<>();
         for(int i = 0; i < 21; i++) {
             points.add(cb.value(i/20.0));
         }
 
         Parameterization parameterization = new ChordParameterization(points);
         PointsStrip ps2 = new PointsStrip(points, parameterization);
-        List<CubicBezier> cubics = ps2.fit(1000, new Vector(points.get(1), points.get(0)), new Vector(points.get(points.size()-1), points.get(points.size()-2)));
+        List<CubicBezier> cubics = ps2.fit(1000, points.get(1).subtract(points.get(0)), points.get(points.size()-1).subtract(points.get(points.size()-2)));
         for(CubicBezier cubic: cubics)
             System.out.println(cubic);
     }

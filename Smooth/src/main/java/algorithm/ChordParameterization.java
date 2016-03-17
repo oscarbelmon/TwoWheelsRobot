@@ -1,16 +1,14 @@
 package algorithm;
 
-import geometry.Point;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by oscar on 6/03/16.
  */
 public class ChordParameterization extends Parameterization {
-    public ChordParameterization(List<Point> points) {
+    public ChordParameterization(List<Vector2D> points) {
         super(points);
         this.points = points;
         parameterize();
@@ -27,7 +25,7 @@ public class ChordParameterization extends Parameterization {
         }
     }
 
-    private double totalLength(List<Point> points) {
+    private double totalLength(List<Vector2D> points) {
         double length = 0;
         for(int i = points.size()-1; i > 0; i--)
             length += points.get(i).distance(points.get(i-1));
