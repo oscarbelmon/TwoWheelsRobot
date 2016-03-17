@@ -60,8 +60,13 @@ public class CubicBezier {
     public double curvature(double t) {
         Vector2D vp = firstDerivative(t);
         Vector2D vpp = secondDerivative(t);
-        double numerator = vp.crossProduct(vp, vpp);
+        System.out.println("First derivative: " + vp);
+        System.out.println("Second derivative: " + vpp);
+//        double numerator = vp.crossProduct(vp, vpp);
+        double numerator = vp.getX() * vpp.getY() - vp.getY() * vpp.getX();
         double denominator = Math.pow(vp.getNorm(), 3);
+        System.out.println("Numerator: " + numerator);
+        System.out.println("Denominator: " + denominator);
         return numerator/denominator;
     }
 
