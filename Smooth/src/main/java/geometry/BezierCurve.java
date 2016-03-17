@@ -71,7 +71,7 @@ public abstract class BezierCurve {
 
     private double integrateDerivatives(double min, double max) {
         RombergIntegrator ri = new RombergIntegrator();
-        return ri.integrate(1000, this::derivatives, min, max);
+        return ri.integrate(10000, this::derivatives, min, max);
     }
 
     private double integrateDerivativesFromCero(double max) {

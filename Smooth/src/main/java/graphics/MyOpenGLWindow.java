@@ -23,6 +23,7 @@ public class MyOpenGLWindow extends OpenGLWindow {
     private PointsStrip pointsStrip = new PointsStrip();
     private int cnt = 0;
     private List<CubicBezier> cubics = new ArrayList<>();
+    private CubicBezierStrip cbs;
 
     public MyOpenGLWindow(String title) {
         super(title);
@@ -38,9 +39,9 @@ public class MyOpenGLWindow extends OpenGLWindow {
 //        if(cubics != null)
         if(!cubics.isEmpty()) {
             gl.glColor3d(1, 0, 0);
+            bezierS2(gl);
             for (CubicBezier cubic : cubics)
                 bezier2(gl, cubic);
-            bezierS(gl);
         }
 //        else {
 ////            bezier2(gl, model);
@@ -63,10 +64,25 @@ public class MyOpenGLWindow extends OpenGLWindow {
         Vector2D point;
         for(int i = 0; i <= 10; i++) {
             inverse = bc.inverse(i/10.*length);
-//            System.out.println(inverse);
             point = bc.value(inverse);
             gl.glVertex2d(point.getX(), point.getY());
         }
+        gl.glEnd();
+    }
+
+    private void bezierS2(GL2 gl) {
+        gl.glColor3d(0,1,0);
+        gl.glPointSize(5);
+        gl.glBegin(GL2.GL_POINTS);
+        double totalLength = cbs.getTotalLength();
+        Vector2D point;
+        int iterations = (int)cbs.getTotalLength()/50;
+        for(int i = 0; i < iterations; i++) {
+            point = cbs.inverse(totalLength*i/iterations);
+            gl.glVertex2d(point.getX(), point.getY());
+        }
+        point = cbs.inverse(totalLength);
+        gl.glVertex2d(point.getX(), point.getY());
         gl.glEnd();
     }
 
@@ -105,28 +121,30 @@ public class MyOpenGLWindow extends OpenGLWindow {
         }
         gl.glEnd();
 
-        gl.glPointSize(3);
-        gl.glColor3d(0, 0, 0);
-        gl.glBegin(GL.GL_POINTS);
-        p = cb.value(0);
-        gl.glVertex2d(p.getX(), p.getY());
-        p = cb.value(1);
-        gl.glVertex2d(p.getX(), p.getY());
-        gl.glEnd();
+        // End points
+//        gl.glPointSize(3);
+//        gl.glColor3d(0, 0, 0);
+//        gl.glBegin(GL.GL_POINTS);
+//        p = cb.value(0);
+//        gl.glVertex2d(p.getX(), p.getY());
+//        p = cb.value(1);
+//        gl.glVertex2d(p.getX(), p.getY());
+//        gl.glEnd();
 
-        gl.glColor3d(0, 0, 1);
-        gl.glBegin(GL2.GL_LINES);
-        Vector2D start = cb.value(0);
-        Vector2D vector = cb.firstDerivative(0).normalize().scalarMultiply(20);
-        Vector2D end = start.add(vector);
-        gl.glVertex2d(start.getX(), start.getY());
-        gl.glVertex2d(end.getX(), end.getY());
-        start = cb.value(1);
-        vector = cb.firstDerivative(1).normalize().scalarMultiply(-20);
-        end = start.add(vector);
-        gl.glVertex2d(start.getX(), start.getY());
-        gl.glVertex2d(end.getX(), end.getY());
-        gl.glEnd();
+        // Tangents
+//        gl.glColor3d(0, 0, 1);
+//        gl.glBegin(GL2.GL_LINES);
+//        Vector2D start = cb.value(0);
+//        Vector2D vector = cb.firstDerivative(0).normalize().scalarMultiply(20);
+//        Vector2D end = start.add(vector);
+//        gl.glVertex2d(start.getX(), start.getY());
+//        gl.glVertex2d(end.getX(), end.getY());
+//        start = cb.value(1);
+//        vector = cb.firstDerivative(1).normalize().scalarMultiply(-20);
+//        end = start.add(vector);
+//        gl.glVertex2d(start.getX(), start.getY());
+//        gl.glVertex2d(end.getX(), end.getY());
+//        gl.glEnd();
     }
 
     private void renderTangents(GL2 gl) {
@@ -244,13 +262,14 @@ public class MyOpenGLWindow extends OpenGLWindow {
                 System.out.println("Points: " + pointsStrip.size());
                 System.out.println("Cubics: " + cubics.size());
                 System.out.println("Points in cubics: " + ((cubics.size()-1)*3+4));
-                CubicBezier cb = cubics.get(0);
+//                CubicBezier cb = cubics.get(0);
 //                System.out.println(cb.getLength());
-                List<Vector2D> vectors = new ArrayList<>();
-                for(int i = 0; i < 4; i++) {
-                    Vector2D point = cb.getPoint(i);
-                    vectors.add(new Vector2D(point.getX(), point.getY()));
-                }
+//                List<Vector2D> vectors = new ArrayList<>();
+//                for(int i = 0; i < 4; i++) {
+//                    Vector2D point = cb.getPoint(i);
+//                    vectors.add(new Vector2D(point.getX(), point.getY()));
+//                }
+                cbs = new CubicBezierStrip(cubics);
                 display();
                 break;
             case KeyEvent.VK_S : // Show info
