@@ -2,6 +2,7 @@ package geometry;
 
 import org.apache.commons.math3.analysis.DifferentiableUnivariateFunction;
 import org.apache.commons.math3.analysis.UnivariateFunction;
+import org.apache.commons.math3.analysis.differentiation.DerivativeStructure;
 import org.apache.commons.math3.analysis.function.Sqrt;
 import org.apache.commons.math3.analysis.integration.RombergIntegrator;
 import org.apache.commons.math3.analysis.polynomials.PolynomialFunction;
@@ -64,6 +65,16 @@ public class BezierCurveTest {
 
     @Test
     public void test5() {
+        int params = 1;
+        int order = 3;
+        double xRealValue = Math.PI/4;
+        DerivativeStructure x = new DerivativeStructure(params, order, 0, xRealValue);
+        DerivativeStructure y = x.multiply(x).subtract(5);
+//        DerivativeStructure y = x.sin();//.multiply(x).subtract(5);
+        System.out.println("y    = " + y.getValue());
+        System.out.println("y'   = " + y.getPartialDerivative(1));
+        System.out.println("y''  = " + y.getPartialDerivative(2));
+        System.out.println("y''' = " + y.getPartialDerivative(3));
     }
 
     private class Funcion implements DifferentiableUnivariateFunction {
