@@ -3,6 +3,7 @@ package geometry;
 import org.apache.commons.math3.analysis.DifferentiableUnivariateFunction;
 import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.analysis.differentiation.DerivativeStructure;
+import org.apache.commons.math3.analysis.differentiation.FiniteDifferencesDifferentiator;
 import org.apache.commons.math3.analysis.function.Sqrt;
 import org.apache.commons.math3.analysis.integration.RombergIntegrator;
 import org.apache.commons.math3.analysis.polynomials.PolynomialFunction;
@@ -29,7 +30,7 @@ public class BezierCurveTest {
         poiints.add(new Vector2D(35, 200));
         poiints.add(new Vector2D(220, 260));
         poiints.add(new Vector2D(220, 40));
-        bc = new BezierCurve(poiints);
+//        bc = new BezierCurve(poiints);
     }
     @Test
     public void lengthTest() {
@@ -75,6 +76,17 @@ public class BezierCurveTest {
         System.out.println("y'   = " + y.getPartialDerivative(1));
         System.out.println("y''  = " + y.getPartialDerivative(2));
         System.out.println("y''' = " + y.getPartialDerivative(3));
+    }
+
+    @Test
+    public void test6() {
+        FiniteDifferencesDifferentiator differentiator = new FiniteDifferencesDifferentiator(3, 0.125);
+        PolynomialFunction p = new PolynomialFunction(new double[]{1,2,3});
+        double x = 2;
+        System.out.println(p.value(x));
+        System.out.println(p.derivative().value(x));
+        System.out.println(differentiator.differentiate(p).value(x));
+//        DerivativeStructure ds = differentiator.differentiate(p);
     }
 
     private class Funcion implements DifferentiableUnivariateFunction {
