@@ -32,23 +32,23 @@ public class MyOpenGLWindow extends OpenGLWindow {
     @Override
     public void render(GL2 gl) {
         gl.glPushMatrix();
-//        if(cnt == 4) bezier(gl);
+        if(cnt == 4) bezier(gl);
 //        renderAllPoints(gl);
 //        renderFilteredPoints(gl);
 //        renderTangents(gl);
 //        if(cubics != null)
-        if(!cubics.isEmpty()) {
-            gl.glColor3d(1, 0, 0);
-            for (CubicBezier cubic : cubics)
-                bezier2(gl, cubic);
-            bezierS(gl);
-        }
+//        if(!cubics.isEmpty()) {
+//            gl.glColor3d(1, 0, 0);
+//            for (CubicBezier cubic : cubics)
+//                bezier2(gl, cubic);
+//            bezierS(gl);
+//        }
 //        else {
 ////            bezier2(gl, model);
-        else {
-            gl.glColor3d(0,1,0);
-            renderAllPoints(gl);
-        }
+//        else {
+//            gl.glColor3d(0,1,0);
+//            renderAllPoints(gl);
+//        }
 //        }
 //        coso(gl);
 //        coso2(gl);
@@ -212,18 +212,18 @@ public class MyOpenGLWindow extends OpenGLWindow {
 
     }
 
-//    @Override
-//    public void mousePressed(MouseEvent e) {
-//        int x = e.getX()-getWidth()/2;
-//        int y = getHeight()/2-e.getY();
-//        pointsStrip.add(new Point(x, y));
-//        cnt++;
-//        if(cnt == 4) {
-//            display();
-//            pointsStrip = new ArrayList<>();
-//            cnt = 0;
-//        }
-//    }
+    @Override
+    public void mousePressed(MouseEvent e) {
+        int x = e.getX()-getWidth()/2;
+        int y = getHeight()/2-e.getY();
+        pointsStrip.addPoint(new Point(x, y));
+        cnt++;
+        if(cnt == 4) {
+            display();
+            pointsStrip = new PointsStrip();
+            cnt = 0;
+        }
+    }
 
 
     @Override
