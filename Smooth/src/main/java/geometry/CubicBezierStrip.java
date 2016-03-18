@@ -12,7 +12,6 @@ import java.util.Map;
 public class CubicBezierStrip {
     private Map<Double, CubicBezier> cubics = new LinkedHashMap<>();
     private double totalLength = 0;
-    private CubicBezier firstCubic;
 
     public CubicBezierStrip(List<CubicBezier> cubics) {
         super();
@@ -20,7 +19,6 @@ public class CubicBezierStrip {
     }
 
     private void calculateLengths(List<CubicBezier> cubics) {
-        firstCubic = cubics.get(0);
         double length = 0;
         CubicBezier coso = null;
         for(CubicBezier cb: cubics) {
@@ -37,21 +35,35 @@ public class CubicBezierStrip {
     }
 
     public Vector2D inverse(double s) {
-        if(s == 0) return firstCubic.value(0);
+        if(s == 0) return cubics.get(new Double(0)).value(s);
         if(s == totalLength) return cubics.get(totalLength).value(1);
-        CubicBezier previous = null;
+        CubicWithLength cb = filterCubic(s);
+        double t = cb.cb.inverse(s-cb.length);
+        return cb.cb.value(t);
+    }
+
+    private CubicWithLength filterCubic(double s) {
+        CubicBezier previous = cubics.get(new Double(0));
         double previousLength = 0;
         for(Double length: cubics.keySet()) {
             if(length > s) {
-//                CubicBezier cb = cubics.get(length);
                 CubicBezier cb = previous;
                 double t = cb.inverse(s-previousLength);
-                return cb.value(t);
+                return new CubicWithLength(previous, previousLength);
             }
             previous = cubics.get(length);
             previousLength = length;
         }
+        return new CubicWithLength(null, 0);
+    }
 
-        return new Vector2D(0,0);
+    private class CubicWithLength {
+        CubicBezier cb;
+        double length;
+
+        CubicWithLength(CubicBezier cb, double length) {
+            this.cb = cb;
+            this.length = length;
+        }
     }
 }
