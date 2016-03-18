@@ -37,9 +37,28 @@ public class CubicBezierStrip {
     public Vector2D inverse(double s) {
         if(s == 0) return cubics.get(new Double(0)).value(s);
         if(s == totalLength) return cubics.get(totalLength).value(1);
-        CubicWithLength cb = filterCubic(s);
-        double t = cb.cb.inverse(s-cb.length);
-        return cb.cb.value(t);
+        CubicWithLength cubicWithLength = filterCubic(s);
+        return cubicWithLength.cubicBezier.value(cubicWithLength.t);
+    }
+
+    public Vector2D curvatureCenter(double s) {
+        CubicWithLength cbl = filterCubic(s);
+        return cbl.cubicBezier.curvatureCenter(cbl.t);
+    }
+
+    public double curvatureRadius(double s) {
+        CubicWithLength cbl = filterCubic(s);
+        return cbl.cubicBezier.curvatureRadius(s);
+    }
+
+    public Vector2D tangentNormalized(double s) {
+        CubicWithLength cbl = filterCubic(s);
+        return cbl.cubicBezier.firstDerivative(cbl.t).normalize();
+    }
+
+    public Vector2D normalNormalized(double s) {
+        Vector2D v = tangentNormalized(s);
+        return new Vector2D(v.getY(), -v.getX());
     }
 
     private CubicWithLength filterCubic(double s) {
@@ -49,7 +68,7 @@ public class CubicBezierStrip {
             if(length > s) {
                 CubicBezier cb = previous;
                 double t = cb.inverse(s-previousLength);
-                return new CubicWithLength(previous, previousLength);
+                return new CubicWithLength(previous, t);
             }
             previous = cubics.get(length);
             previousLength = length;
@@ -58,12 +77,12 @@ public class CubicBezierStrip {
     }
 
     private class CubicWithLength {
-        CubicBezier cb;
-        double length;
+        CubicBezier cubicBezier;
+        double t;
 
-        CubicWithLength(CubicBezier cb, double length) {
-            this.cb = cb;
-            this.length = length;
+        CubicWithLength(CubicBezier cb, double t) {
+            this.cubicBezier = cb;
+            this.t = t;
         }
     }
 }
