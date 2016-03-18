@@ -76,7 +76,7 @@ public class MyOpenGLWindow extends OpenGLWindow {
         gl.glBegin(GL2.GL_POINTS);
         double totalLength = cbs.getTotalLength();
         Vector2D point;
-        int iterations = (int)cbs.getTotalLength()/50;
+        int iterations = (int)cbs.getTotalLength()/25;
         for(int i = 0; i < iterations; i++) {
             point = cbs.inverse(totalLength*i/iterations);
             gl.glVertex2d(point.getX(), point.getY());
