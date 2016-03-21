@@ -91,27 +91,16 @@ public class MyOpenGLWindow extends OpenGLWindow {
 
         // Normal
         gl.glBegin(GL2.GL_LINES);
-//        double totalLength = cbs.getTotalLength();
-        Vector2D tangent, point2;
-//        int iterations = (int)cbs.getTotalLength()/50;
+        Vector2D point2;
         double dSpeed;
         for(int i = 0; i < iterations; i++) {
             point = cbs.inverse(totalLength*i/iterations);
-            tangent = cbs.normalNormalized(totalLength*i/iterations).scalarMultiply(20);
-//            point2 = point.add(tangent);
             point2 = cbs.curvatureCenter(totalLength*i/iterations);
-            System.out.println(cbs.curvatureRadius(totalLength*i/iterations));
             dSpeed = robot.getDifferentialSpeed(cbs.curvatureRadius(totalLength*i/iterations));
-//            System.out.println(dSpeed);
-//            System.out.println(point);
-//            System.out.println(point2);
+            System.out.println(dSpeed);
             gl.glVertex2d(point.getX(), point.getY());
             gl.glVertex2d(point2.getX(), point2.getY());
         }
-//        point = cbs.inverse(totalLength);
-//        tangentNormalized = cbs.tangentNormalized(totalLength);
-//        gl.glVertex2d(point.getX(), point.getY());
-//        gl.glVertex2d(tangentNormalized.getX()*10, tangentNormalized.getY()*10);
         gl.glEnd();
 
     }
