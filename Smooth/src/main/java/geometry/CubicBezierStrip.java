@@ -48,12 +48,12 @@ public class CubicBezierStrip {
 
     public double curvatureRadius(double s) {
         CubicWithLength cbl = filterCubic(s);
-        return cbl.cubicBezier.curvatureRadius(s);
+        return cbl.cubicBezier.curvatureRadius(cbl.t);
     }
 
     public double curvature(double s) {
         CubicWithLength cbl = filterCubic(s);
-        return cbl.cubicBezier.curvature(s);
+        return cbl.cubicBezier.curvature(cbl.t);
     }
 
     public Vector2D tangentNormalized(double s) {
