@@ -9,7 +9,9 @@ import com.jogamp.opengl.util.gl2.GLUT;
 import geometry.*;
 import graphics.myopengl.OpenGLWindow;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import robotics.*;
 
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -70,12 +72,13 @@ public class MyOpenGLWindow extends OpenGLWindow {
     }
 
     private void bezierS2(GL2 gl) {
+        TwoWheelsRobot robot = new TwoWheelsRobot(20, 10);
         gl.glColor3d(0,1,0);
         gl.glPointSize(5);
         gl.glBegin(GL2.GL_POINTS);
         double totalLength = cbs.getTotalLength();
         Vector2D point;
-        int iterations = (int)cbs.getTotalLength()/50;
+        int iterations = (int)cbs.getTotalLength()/10;
         for(int i = 0; i < iterations; i++) {
             point = cbs.inverse(totalLength*i/iterations);
             gl.glVertex2d(point.getX(), point.getY());
@@ -90,12 +93,15 @@ public class MyOpenGLWindow extends OpenGLWindow {
 //        double totalLength = cbs.getTotalLength();
         Vector2D tangent, point2;
 //        int iterations = (int)cbs.getTotalLength()/50;
+        double dSpeed;
         for(int i = 0; i < iterations; i++) {
             point = cbs.inverse(totalLength*i/iterations);
             tangent = cbs.normalNormalized(totalLength*i/iterations).scalarMultiply(20);
 //            point2 = point.add(tangent);
             point2 = cbs.curvatureCenter(totalLength*i/iterations);
-            System.out.println(cbs.curvature(totalLength*i/iterations));
+            System.out.println(cbs.curvatureRadius(totalLength*i/iterations));
+            dSpeed = robot.getDifferentialSpeed(cbs.curvatureRadius(totalLength*i/iterations));
+//            System.out.println(dSpeed);
 //            System.out.println(point);
 //            System.out.println(point2);
             gl.glVertex2d(point.getX(), point.getY());
