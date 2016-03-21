@@ -95,6 +95,7 @@ public class MyOpenGLWindow extends OpenGLWindow {
             tangent = cbs.normalNormalized(totalLength*i/iterations).scalarMultiply(20);
 //            point2 = point.add(tangent);
             point2 = cbs.curvatureCenter(totalLength*i/iterations);
+            System.out.println(cbs.curvature(totalLength*i/iterations));
 //            System.out.println(point);
 //            System.out.println(point2);
             gl.glVertex2d(point.getX(), point.getY());
