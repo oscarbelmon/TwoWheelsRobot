@@ -14,6 +14,6 @@ public class TwoWheelsRobot {
     }
 
     public double getDifferentialSpeed(double r) {
-        return speed * wheelsDistance / r*1000000000;
+        return (speed * wheelsDistance/2) / r;
     }
 }

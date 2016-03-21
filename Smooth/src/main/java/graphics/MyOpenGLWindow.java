@@ -9,6 +9,7 @@ import com.jogamp.opengl.util.gl2.GLUT;
 import geometry.*;
 import graphics.myopengl.OpenGLWindow;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.junit.experimental.max.MaxHistory;
 import robotics.*;
 
 import java.awt.*;
@@ -90,27 +91,16 @@ public class MyOpenGLWindow extends OpenGLWindow {
 
         // Normal
         gl.glBegin(GL2.GL_LINES);
-//        double totalLength = cbs.getTotalLength();
-        Vector2D tangent, point2;
-//        int iterations = (int)cbs.getTotalLength()/50;
+        Vector2D point2;
         double dSpeed;
         for(int i = 0; i < iterations; i++) {
             point = cbs.inverse(totalLength*i/iterations);
-            tangent = cbs.normalNormalized(totalLength*i/iterations).scalarMultiply(20);
-//            point2 = point.add(tangent);
             point2 = cbs.curvatureCenter(totalLength*i/iterations);
-            System.out.println(cbs.curvatureRadius(totalLength*i/iterations));
             dSpeed = robot.getDifferentialSpeed(cbs.curvatureRadius(totalLength*i/iterations));
-//            System.out.println(dSpeed);
-//            System.out.println(point);
-//            System.out.println(point2);
+            System.out.println(dSpeed);
             gl.glVertex2d(point.getX(), point.getY());
             gl.glVertex2d(point2.getX(), point2.getY());
         }
-//        point = cbs.inverse(totalLength);
-//        tangentNormalized = cbs.tangentNormalized(totalLength);
-//        gl.glVertex2d(point.getX(), point.getY());
-//        gl.glVertex2d(tangentNormalized.getX()*10, tangentNormalized.getY()*10);
         gl.glEnd();
 
     }
@@ -283,6 +273,7 @@ public class MyOpenGLWindow extends OpenGLWindow {
                 cubics = new ArrayList<>();
                 display();
                 break;
+
             case KeyEvent.VK_F :
                 pointsStrip = pointsStrip.removeDuplicates();
                 Parameterization parameterization = new ChordParameterization(pointsStrip.getPoints());
@@ -301,7 +292,19 @@ public class MyOpenGLWindow extends OpenGLWindow {
                 cbs = new CubicBezierStrip(cubics);
                 display();
                 break;
-            case KeyEvent.VK_S : // Show info
+
+            case KeyEvent.VK_S :
+                pointsStrip = new PointsStrip();
+                cubics = new ArrayList<>();
+                double radius = 200, angle;
+                for (int i = 0; i < 100; i++) {
+                    angle = Math.PI*i/180.0;
+                    pointsStrip.addPoint(new Vector2D(radius*Math.cos(angle), radius*Math.sin(angle)));
+                }
+                display();
+                break;
+
+            case KeyEvent.VK_I : // Show info
                 System.out.println(cubics.size());
                 for(CubicBezier cubicBezier: cubics)
                     System.out.println(cubicBezier);
