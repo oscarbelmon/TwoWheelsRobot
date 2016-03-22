@@ -27,6 +27,8 @@ public class MyOpenGLWindow extends OpenGLWindow {
     private List<CubicBezier> cubics = new ArrayList<>();
     private CubicBezierStrip cbs;
     private BTConnection btConnection = new BTConnection();
+    private JTextArea jtaDevices;
+    private JTextField jtfDeviceSelected;
 
     public MyOpenGLWindow(String title) {
         super(title);
@@ -48,6 +50,10 @@ public class MyOpenGLWindow extends OpenGLWindow {
         jbShowInfo.addActionListener(e -> showInfo());
         JButton jbStartDiscovery = new JButton("Start discovery");
         jbStartDiscovery.addActionListener(e -> startDiscovery());
+        jtaDevices = new JTextArea(10, 40);
+        jtfDeviceSelected = new JTextField(2);
+        JButton jbConnectDevide = new JButton("Connect");
+        jbConnectDevide.addActionListener(e -> connectDevice());
 
         JPanel jpPanel = new JPanel();
         jpPanel.setLayout(new BoxLayout(jpPanel, BoxLayout.PAGE_AXIS));
@@ -56,12 +62,25 @@ public class MyOpenGLWindow extends OpenGLWindow {
         jpPanel.add(jbCleanCanvas);
         jpPanel.add(jbShowInfo);
         jpPanel.add(jbStartDiscovery);
+        jpPanel.add(jtaDevices);
+        jpPanel.add(jtfDeviceSelected);
+        jpPanel.add(jbConnectDevide);
+
         return jpPanel;
+    }
+
+    private void connectDevice() {
+        String result = btConnection.connect(new Integer(jtfDeviceSelected.getText()).intValue());
+        jtaDevices.append(result + "\n");
     }
 
     private void startDiscovery() {
         btConnection.bluetoothDiscovery();
-        System.out.println(btConnection.getBtDevices());
+        List<BTConnection.Device> devices = btConnection.getBtDevices();
+        for(int i = 0; i < devices.size(); i++) {
+            jtaDevices.append(i + ".- " + btConnection.getFriendlyName(i));
+            jtaDevices.append("\n");
+        }
     }
 
     @Override
