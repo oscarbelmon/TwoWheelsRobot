@@ -6,13 +6,13 @@ import algorithm.Parameterization;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.gl2.GLUT;
+import connection.BTConnection;
 import geometry.*;
 import graphics.myopengl.OpenGLWindow;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
-import org.junit.experimental.max.MaxHistory;
 import robotics.*;
 
-import java.awt.*;
+import javax.swing.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -26,9 +26,42 @@ public class MyOpenGLWindow extends OpenGLWindow {
     private int cnt = 0;
     private List<CubicBezier> cubics = new ArrayList<>();
     private CubicBezierStrip cbs;
+    private BTConnection btConnection = new BTConnection();
 
     public MyOpenGLWindow(String title) {
         super(title);
+    }
+
+    @Override
+    protected JPanel infoPanel() {
+        return createInfoPanel();
+    }
+
+    private JPanel createInfoPanel() {
+        JButton jbSimulateCurve = new JButton("Simulate");
+        jbSimulateCurve.addActionListener(e -> simulateCurve());
+        JButton jbFitCurve = new JButton("Fit curve");
+        jbFitCurve.addActionListener(e -> fitCurve());
+        JButton jbCleanCanvas = new JButton("Clean canvas");
+        jbCleanCanvas.addActionListener(e -> cleanCanvas());
+        JButton jbShowInfo = new JButton("Show info");
+        jbShowInfo.addActionListener(e -> showInfo());
+        JButton jbStartDiscovery = new JButton("Start discovery");
+        jbStartDiscovery.addActionListener(e -> startDiscovery());
+
+        JPanel jpPanel = new JPanel();
+        jpPanel.setLayout(new BoxLayout(jpPanel, BoxLayout.PAGE_AXIS));
+        jpPanel.add(jbSimulateCurve);
+        jpPanel.add(jbFitCurve);
+        jpPanel.add(jbCleanCanvas);
+        jpPanel.add(jbShowInfo);
+        jpPanel.add(jbStartDiscovery);
+        return jpPanel;
+    }
+
+    private void startDiscovery() {
+        btConnection.bluetoothDiscovery();
+        System.out.println(btConnection.getBtDevices());
     }
 
     @Override
@@ -265,50 +298,59 @@ public class MyOpenGLWindow extends OpenGLWindow {
     }
 
 
-    @Override
-    public void keyPressed(KeyEvent keyEvent) {
-        switch (keyEvent.getKeyCode()) {
-            case KeyEvent.VK_ENTER :
-                pointsStrip = new PointsStrip();
-                cubics = new ArrayList<>();
-                display();
-                break;
+//    @Override
+//    public void keyPressed(KeyEvent keyEvent) {
+//        switch (keyEvent.getKeyCode()) {
+//            case KeyEvent.VK_ENTER :
+//                cleanCanvas();
+//                break;
+//
+//            case KeyEvent.VK_F :
+//                fitCurve();
+//                break;
+//
+//            case KeyEvent.VK_S :
+//                simulateCurve();
+//                break;
+//
+//            case KeyEvent.VK_I : // Show info
+//                showInfo();
+//                break;
+//        }
+//    }
 
-            case KeyEvent.VK_F :
-                pointsStrip = pointsStrip.removeDuplicates();
-                Parameterization parameterization = new ChordParameterization(pointsStrip.getPoints());
-                PointsStrip ps = new PointsStrip(pointsStrip.getPoints(), parameterization);
-                cubics = ps.fit(20, pointsStrip.get(1).subtract(pointsStrip.get(0)).normalize(), pointsStrip.get(pointsStrip.size()-2).subtract(pointsStrip.get(pointsStrip.size()-1)).normalize());
-                System.out.println("Points: " + pointsStrip.size());
-                System.out.println("Cubics: " + cubics.size());
-                System.out.println("Points in cubics: " + ((cubics.size()-1)*3+4));
-//                CubicBezier cb = cubics.get(0);
-//                System.out.println(cb.getLength());
-//                List<Vector2D> vectors = new ArrayList<>();
-//                for(int i = 0; i < 4; i++) {
-//                    Vector2D point = cb.getPoint(i);
-//                    vectors.add(new Vector2D(point.getX(), point.getY()));
-//                }
-                cbs = new CubicBezierStrip(cubics);
-                display();
-                break;
+    private void showInfo() {
+        System.out.println(cubics.size());
+        for(CubicBezier cubicBezier: cubics)
+            System.out.println(cubicBezier);
+    }
 
-            case KeyEvent.VK_S :
-                pointsStrip = new PointsStrip();
-                cubics = new ArrayList<>();
-                double radius = 200, angle;
-                for (int i = 0; i < 100; i++) {
-                    angle = Math.PI*i/180.0;
-                    pointsStrip.addPoint(new Vector2D(radius*Math.cos(angle), radius*Math.sin(angle)));
-                }
-                display();
-                break;
+    private void cleanCanvas() {
+        pointsStrip = new PointsStrip();
+        cubics = new ArrayList<>();
+        display();
+    }
 
-            case KeyEvent.VK_I : // Show info
-                System.out.println(cubics.size());
-                for(CubicBezier cubicBezier: cubics)
-                    System.out.println(cubicBezier);
-                break;
+    private void fitCurve() {
+        pointsStrip = pointsStrip.removeDuplicates();
+        Parameterization parameterization = new ChordParameterization(pointsStrip.getPoints());
+        PointsStrip ps = new PointsStrip(pointsStrip.getPoints(), parameterization);
+        cubics = ps.fit(20, pointsStrip.get(1).subtract(pointsStrip.get(0)).normalize(), pointsStrip.get(pointsStrip.size()-2).subtract(pointsStrip.get(pointsStrip.size()-1)).normalize());
+        System.out.println("Points: " + pointsStrip.size());
+        System.out.println("Cubics: " + cubics.size());
+        System.out.println("Points in cubics: " + ((cubics.size()-1)*3+4));
+        cbs = new CubicBezierStrip(cubics);
+        display();
+    }
+
+    private void simulateCurve() {
+        pointsStrip = new PointsStrip();
+        cubics = new ArrayList<>();
+        double radius = 200, angle;
+        for (int i = 0; i < 100; i++) {
+            angle = Math.PI*i/180.0;
+            pointsStrip.addPoint(new Vector2D(radius*Math.cos(angle), radius*Math.sin(angle)));
         }
+        display();
     }
 }
