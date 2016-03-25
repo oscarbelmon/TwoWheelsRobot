@@ -1,11 +1,9 @@
 package graphics;
 
 import algorithm.ChordParameterization;
-import algorithm.DouglassPeucker;
 import algorithm.Parameterization;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
-import com.jogamp.opengl.util.gl2.GLUT;
 import connection.BTConnection;
 import geometry.*;
 import graphics.myopengl.OpenGLWindow;
@@ -13,7 +11,6 @@ import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import robotics.*;
 
 import javax.swing.*;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +26,10 @@ public class MyOpenGLWindow extends OpenGLWindow {
     private BTConnection btConnection = new BTConnection();
     private JTextArea jtaDevices;
     private JTextField jtfDeviceSelected;
+    private boolean animation = false;
+    private int iterations = 0;
+    private int iteration = 0;
+    private double totalLength = 0;
 
     public MyOpenGLWindow(String title) {
         super(title);
@@ -54,6 +55,10 @@ public class MyOpenGLWindow extends OpenGLWindow {
         jtfDeviceSelected = new JTextField(2);
         JButton jbConnectDevide = new JButton("Connect");
         jbConnectDevide.addActionListener(e -> connectDevice());
+        JButton jbStartAnimation = new JButton("Start animation");
+        jbStartAnimation.addActionListener(e -> startAnimation());
+        JButton jbStopAnimation = new JButton("Stop animation");
+        jbStopAnimation.addActionListener(e -> stopAnimation());
 
         JPanel jpPanel = new JPanel();
         jpPanel.setLayout(new BoxLayout(jpPanel, BoxLayout.PAGE_AXIS));
@@ -65,8 +70,22 @@ public class MyOpenGLWindow extends OpenGLWindow {
         jpPanel.add(jtaDevices);
         jpPanel.add(jtfDeviceSelected);
         jpPanel.add(jbConnectDevide);
+        jpPanel.add(jbStartAnimation);
+        jpPanel.add(jbStopAnimation);
 
         return jpPanel;
+    }
+
+    private void stopAnimation() {
+        iteration = iterations;
+    }
+
+    private void startAnimation() {
+        animation = true;
+        iterations = (int) cbs.getTotalLength() / 10;
+        iteration = 0;
+        totalLength = cbs.getTotalLength();
+        new Thread(new Hilo()).start();
     }
 
     private void connectDevice() {
@@ -77,7 +96,7 @@ public class MyOpenGLWindow extends OpenGLWindow {
     private void startDiscovery() {
         btConnection.bluetoothDiscovery();
         List<BTConnection.Device> devices = btConnection.getBtDevices();
-        for(int i = 0; i < devices.size(); i++) {
+        for (int i = 0; i < devices.size(); i++) {
             jtaDevices.append(i + ".- " + btConnection.getFriendlyName(i));
             jtaDevices.append("\n");
         }
@@ -86,54 +105,50 @@ public class MyOpenGLWindow extends OpenGLWindow {
     @Override
     public void render(GL2 gl) {
         gl.glPushMatrix();
-//        if(cnt == 4) bezier(gl);
-//        renderAllPoints(gl);
-//        renderFilteredPoints(gl);
-//        renderTangents(gl);
-//        if(cubics != null)
-        if(!cubics.isEmpty()) {
+        if (animation) {
+            renderAnimation(gl);
+        } else if (!cubics.isEmpty()) {
             gl.glColor3d(1, 0, 0);
             for (CubicBezier cubic : cubics)
-                bezier2(gl, cubic);
-            bezierS2(gl);
-        }
-//        else {
-////            bezier2(gl, model);
-        else {
-            gl.glColor3d(0,1,0);
+                bezier(gl, cubic);
+            bezierS(gl);
+        } else {
+            gl.glColor3d(0, 1, 0);
             renderAllPoints(gl);
         }
-//        }
-//        coso(gl);
-//        coso2(gl);
+        gl.glPopMatrix();
+    }
+
+    private void renderAnimation(GL2 gl) {
+        gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
+        gl.glPushMatrix();
+        // The curves
+        gl.glColor3d(1, 0, 0);
+        for (CubicBezier cubic : cubics)
+            bezier(gl, cubic);
+
+        // The point
+        gl.glColor3d(0, 0, 0);
+        gl.glBegin(GL2.GL_POINTS);
+        Vector2D point;
+        point = cbs.inverse(totalLength * iteration / iterations);
+        gl.glVertex2d(point.getX(), point.getY());
+//        point = cbs.inverse(totalLength);
+//        gl.glVertex2d(point.getX(), point.getY());
+        gl.glEnd();
         gl.glPopMatrix();
     }
 
     private void bezierS(GL2 gl) {
-        gl.glColor3d(0,1,0);
-        gl.glPointSize(3);
-        gl.glBegin(GL2.GL_POINTS);
-        BezierCurve bc = cubics.get(0);
-        double inverse, length = bc.getLength();
-        Vector2D point;
-        for(int i = 0; i <= 10; i++) {
-            inverse = bc.inverse(i/10.*length);
-            point = bc.value(inverse);
-            gl.glVertex2d(point.getX(), point.getY());
-        }
-        gl.glEnd();
-    }
-
-    private void bezierS2(GL2 gl) {
         TwoWheelsRobot robot = new TwoWheelsRobot(20, 10);
-        gl.glColor3d(0,1,0);
+        gl.glColor3d(0, 1, 0);
         gl.glPointSize(5);
         gl.glBegin(GL2.GL_POINTS);
         double totalLength = cbs.getTotalLength();
         Vector2D point;
-        int iterations = (int)cbs.getTotalLength()/10;
-        for(int i = 0; i < iterations; i++) {
-            point = cbs.inverse(totalLength*i/iterations);
+        int iterations = (int) cbs.getTotalLength() / 10;
+        for (int i = 0; i < iterations; i++) {
+            point = cbs.inverse(totalLength * i / iterations);
             gl.glVertex2d(point.getX(), point.getY());
 
         }
@@ -141,53 +156,29 @@ public class MyOpenGLWindow extends OpenGLWindow {
         gl.glVertex2d(point.getX(), point.getY());
         gl.glEnd();
 
-        // Normal
-        gl.glBegin(GL2.GL_LINES);
-        Vector2D point2;
-        double dSpeed;
-        for(int i = 0; i < iterations; i++) {
-            point = cbs.inverse(totalLength*i/iterations);
-            point2 = cbs.curvatureCenter(totalLength*i/iterations);
-            dSpeed = robot.getDifferentialSpeed(cbs.curvatureRadius(totalLength*i/iterations));
-            System.out.println(dSpeed);
-            gl.glVertex2d(point.getX(), point.getY());
-            gl.glVertex2d(point2.getX(), point2.getY());
-        }
-        gl.glEnd();
+        // Normals
+//        gl.glBegin(GL2.GL_LINES);
+//        Vector2D point2;
+//        double dSpeed;
+//        for(int i = 0; i < iterations; i++) {
+//            point = cbs.inverse(totalLength*i/iterations);
+//            point2 = cbs.curvatureCenter(totalLength*i/iterations);
+//            dSpeed = robot.getDifferentialSpeed(cbs.curvatureRadius(totalLength*i/iterations));
+//            System.out.println(dSpeed);
+//            gl.glVertex2d(point.getX(), point.getY());
+//            gl.glVertex2d(point2.getX(), point2.getY());
+//        }
+//        gl.glEnd();
 
     }
 
-    private void coso2(GL2 gl) {
-        PointsStrip ps = new PointsStrip();
-        ps.addPoint(new Vector2D(-100, 100));
-        ps.addPoint(new Vector2D(100, 100));
-        ps.addPoint(new Vector2D(100, -100));
-        ps.addPoint(new Vector2D(-100, -100));
-        CubicBezier cb = new CubicBezier(ps);
-        gl.glColor3d(0,1,0);
-        bezier2(gl, cb);
-
-        List<Vector2D> points = new ArrayList<>();
-        for(int i = 0; i < 21; i++) {
-            points.add(cb.value(i/20.0));
-        }
-
-        Parameterization parameterization = new ChordParameterization(points);
-        PointsStrip ps2 = new PointsStrip(points, parameterization);
-        List<CubicBezier> cubics = ps2.fit(10, points.get(1).subtract(points.get(0)),
-                points.get(points.size()-1).subtract(points.get(points.size()-2)));
-        gl.glColor3d(1,0,0);
-        for(CubicBezier cubic: cubics)
-            bezier2(gl, cubic);
-    }
-
-    private void bezier2(GL2 gl, CubicBezier cb) {
+    private void bezier(GL2 gl, CubicBezier cb) {
         Vector2D p;
         double steps = 30.0;
         gl.glColor3d(1, 0, 0);
         gl.glBegin(GL2.GL_LINE_STRIP);
-        for(int i = 0; i <= steps; i++) {
-            p = cb.value(i/steps);
+        for (int i = 0; i <= steps; i++) {
+            p = cb.value(i / steps);
             gl.glVertex2d(p.getX(), p.getY());
         }
         gl.glEnd();
@@ -218,30 +209,30 @@ public class MyOpenGLWindow extends OpenGLWindow {
 //        gl.glEnd();
     }
 
-    private void renderTangents(GL2 gl) {
-        if(pointsStrip.size() < 2) return;
-        Vector2D origin = pointsStrip.getTangentNormalizedAtStart().scalarMultiply(20);
-        Vector2D destination = pointsStrip.get(0).add(origin);
-        gl.glColor3d(0, 1, 0);
-        gl.glBegin(GL.GL_LINES);
-        gl.glVertex2d(pointsStrip.get(0).getX(), pointsStrip.get(0).getY());
-        gl.glVertex2d(destination.getX(), destination.getY());
-        gl.glEnd();
-    }
+//    private void renderTangents(GL2 gl) {
+//        if (pointsStrip.size() < 2) return;
+//        Vector2D origin = pointsStrip.getTangentNormalizedAtStart().scalarMultiply(20);
+//        Vector2D destination = pointsStrip.get(0).add(origin);
+//        gl.glColor3d(0, 1, 0);
+//        gl.glBegin(GL.GL_LINES);
+//        gl.glVertex2d(pointsStrip.get(0).getX(), pointsStrip.get(0).getY());
+//        gl.glVertex2d(destination.getX(), destination.getY());
+//        gl.glEnd();
+//    }
 
 
-    private void renderFilteredPoints(GL2 gl) {
-        PointsStrip filtered = new DouglassPeucker(pointsStrip).simplify(5);
-        gl.glColor3d(1, 0, 0);
-        gl.glBegin(GL.GL_LINE_STRIP);
-        for(Vector2D point: filtered.getPoints())
-            gl.glVertex2d(point.getX(), point.getY());
-        gl.glEnd();
-    }
+//    private void renderFilteredPoints(GL2 gl) {
+//        PointsStrip filtered = new DouglassPeucker(pointsStrip).simplify(5);
+//        gl.glColor3d(1, 0, 0);
+//        gl.glBegin(GL.GL_LINE_STRIP);
+//        for (Vector2D point : filtered.getPoints())
+//            gl.glVertex2d(point.getX(), point.getY());
+//        gl.glEnd();
+//    }
 
     private void renderAllPoints(GL2 gl) {
         gl.glBegin(GL.GL_LINE_STRIP);
-        for(Vector2D point: pointsStrip.getPoints())
+        for (Vector2D point : pointsStrip.getPoints())
             gl.glVertex2d(point.getX(), point.getY());
         gl.glEnd();
     }
@@ -254,93 +245,17 @@ public class MyOpenGLWindow extends OpenGLWindow {
     public void init(GL2 gl) {
     }
 
-    private void bezier(GL2 gl) {
-        CubicBezier cb = new CubicBezier(pointsStrip);
-        double curvatureRadius = cb.curvatureRadius(0.5);
-        System.out.println(curvatureRadius);
-        Vector2D center = cb.curvatureCenter(0.5);
-        GLUT glut = new GLUT();
-        gl.glColor3d(0,0,0);
-        gl.glPushMatrix();
-        gl.glTranslated(center.getX(), center.getY(), 0);
-        glut.glutSolidSphere(curvatureRadius, 50, 50);
-        gl.glPopMatrix();
-
-        gl.glColor3d(1,0,0);
-        gl.glBegin(GL2.GL_LINE_STRIP);
-        for(Vector2D p: pointsStrip.getPoints())
-            gl.glVertex2d(p.getX(), p.getY());
-        gl.glEnd();
-
-        Vector2D onCurve = cb.value(0.5);
-        gl.glColor3d(1,1,0);
-        gl.glPushMatrix();
-        gl.glBegin(GL2.GL_LINES);
-        gl.glVertex2d(center.getX(), center.getY());
-        gl.glVertex2d(onCurve.getX(), onCurve.getY());
-        gl.glEnd();
-        gl.glPopMatrix();
-
-        gl.glColor3d(0,1,0);
-        gl.glBegin(GL2.GL_LINE_STRIP);
-        Vector2D p;
-        double steps = 30.0;
-        for(int i = 0; i < steps; i++) {
-            p = cb.value(i/steps);
-            gl.glVertex2d(p.getX(), p.getY());
-        }
-        gl.glEnd();
-
-
-    }
-
-//    @Override
-//    public void mousePressed(MouseEvent e) {
-//        int x = e.getX() - getWidth() / 2;
-//        int y = getHeight() / 2 - e.getY();
-//        pointsStrip.addPoint(new Vector2D(x, y));
-//        cnt++;
-//        if (cnt == 4) {
-//            display();
-//            pointsStrip = new PointsStrip();
-//            cnt = 0;
-//        }
-//    }
-
-
     @Override
     public void mouseDragged(MouseEvent e) {
-        int x = e.getX()-getWidth()/2;
-        int y = getHeight()/2-e.getY();
+        int x = e.getX() - getWidth() / 2;
+        int y = getHeight() / 2 - e.getY();
         pointsStrip.addPoint(new Vector2D(x, y));
         display();
     }
 
-
-//    @Override
-//    public void keyPressed(KeyEvent keyEvent) {
-//        switch (keyEvent.getKeyCode()) {
-//            case KeyEvent.VK_ENTER :
-//                cleanCanvas();
-//                break;
-//
-//            case KeyEvent.VK_F :
-//                fitCurve();
-//                break;
-//
-//            case KeyEvent.VK_S :
-//                simulateCurve();
-//                break;
-//
-//            case KeyEvent.VK_I : // Show info
-//                showInfo();
-//                break;
-//        }
-//    }
-
     private void showInfo() {
         System.out.println(cubics.size());
-        for(CubicBezier cubicBezier: cubics)
+        for (CubicBezier cubicBezier : cubics)
             System.out.println(cubicBezier);
     }
 
@@ -354,10 +269,10 @@ public class MyOpenGLWindow extends OpenGLWindow {
         pointsStrip = pointsStrip.removeDuplicates();
         Parameterization parameterization = new ChordParameterization(pointsStrip.getPoints());
         PointsStrip ps = new PointsStrip(pointsStrip.getPoints(), parameterization);
-        cubics = ps.fit(20, pointsStrip.get(1).subtract(pointsStrip.get(0)).normalize(), pointsStrip.get(pointsStrip.size()-2).subtract(pointsStrip.get(pointsStrip.size()-1)).normalize());
+        cubics = ps.fit(20, pointsStrip.get(1).subtract(pointsStrip.get(0)).normalize(), pointsStrip.get(pointsStrip.size() - 2).subtract(pointsStrip.get(pointsStrip.size() - 1)).normalize());
         System.out.println("Points: " + pointsStrip.size());
         System.out.println("Cubics: " + cubics.size());
-        System.out.println("Points in cubics: " + ((cubics.size()-1)*3+4));
+        System.out.println("Points in cubics: " + ((cubics.size() - 1) * 3 + 4));
         cbs = new CubicBezierStrip(cubics);
         display();
     }
@@ -367,9 +282,28 @@ public class MyOpenGLWindow extends OpenGLWindow {
         cubics = new ArrayList<>();
         double radius = 200, angle;
         for (int i = 0; i < 100; i++) {
-            angle = Math.PI*i/180.0;
-            pointsStrip.addPoint(new Vector2D(radius*Math.cos(angle), radius*Math.sin(angle)));
+            angle = Math.PI * i / 180.0;
+            pointsStrip.addPoint(new Vector2D(radius * Math.cos(angle), radius * Math.sin(angle)));
         }
         display();
+    }
+
+    private class Hilo implements Runnable {
+
+        @Override
+        public void run() {
+            long start = System.currentTimeMillis();
+            while (iteration < iterations) {
+                iteration++;
+                try {
+                    Thread.sleep(40);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                display();
+            }
+            System.out.println("Simulation time: " + (System.currentTimeMillis() - start)/1000.0);
+            animation = false;
+        }
     }
 }

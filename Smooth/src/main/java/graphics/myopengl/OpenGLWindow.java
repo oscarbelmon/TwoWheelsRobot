@@ -31,7 +31,7 @@ public abstract class OpenGLWindow extends ComponentAdapter implements MouseList
 	public void componentResized(ComponentEvent e) {
 		display();
 	}
-	
+
 	private void createGUI(String title) {
         GLProfile glp = GLProfile.getDefault();
         GLCapabilities caps = new GLCapabilities(glp);
@@ -45,7 +45,7 @@ public abstract class OpenGLWindow extends ComponentAdapter implements MouseList
 //        glCanvas.addKeyListener(this);
 		glListener = new MyGLEventListener(this);
 		glCanvas.addGLEventListener(glListener);
-        glCanvas.setSize(400, 400);
+        glCanvas.setSize(400, 480);
         jpPanel.add(glCanvas);
 		jfWindow.getContentPane().add(jpPanel);
         jfWindow.getContentPane().add(infoPanel(), BorderLayout.EAST);
