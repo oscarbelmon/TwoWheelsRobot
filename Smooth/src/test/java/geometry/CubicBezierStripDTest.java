@@ -32,7 +32,7 @@ public class CubicBezierStripDTest {
         ps.addPoint(new Vector2D(220, 40));
 
         list.add(new CubicBezier(ps));
-        list2.add(new BezierCurveD(ps));
+//        list2.add(new BezierCurveD(ps));
 
         ps = new PointsStrip();
         ps.addPoint(new Vector2D(220, 40));
@@ -41,7 +41,7 @@ public class CubicBezierStripDTest {
         ps.addPoint(new Vector2D(300, 360));
 
         list.add(new CubicBezier(ps));
-        list2.add(new BezierCurveD(ps));
+//        list2.add(new BezierCurveD(ps));
 
         cs = new CubicBezierStrip(list);
         cs2 = new CubicBezierStripD(list2);

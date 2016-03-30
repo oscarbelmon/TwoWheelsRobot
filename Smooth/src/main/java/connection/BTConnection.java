@@ -160,8 +160,10 @@ public class BTConnection implements DiscoveryListener {
         }
         sb.append(Math.abs(Integer.parseInt(data)));
         System.out.println(sb.toString());
-        pw.write(sb.toString());
-        pw.flush();
+        if(pw != null) {
+            pw.write(sb.toString());
+            pw.flush();
+        }
     }
 
     public class Device {

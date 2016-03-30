@@ -24,7 +24,7 @@ public class BezierCurveDTest {
         ps.addPoint(new Vector2D(220, 40));
 
         b = new CubicBezier(ps);
-        b2 = new BezierCurveD(ps);
+//        b2 = new BezierCurveD(ps);
     }
 
     @Test

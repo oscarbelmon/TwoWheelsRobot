@@ -17,7 +17,7 @@ public class BezierCurveD {
     private double length;
 
 //    public BezierCurveD(List<Vector2D> points) {
-    public BezierCurveD(PointsStrip ps) {
+    public BezierCurveD(PointStripD ps) {
         super();
         this.points = ps.getPoints();
         degree = points.size() - 1;
