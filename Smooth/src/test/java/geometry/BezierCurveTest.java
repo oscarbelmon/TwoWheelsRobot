@@ -25,11 +25,11 @@ public class BezierCurveTest {
 
     @BeforeClass
     public static void init() {
-        List<Vector2D> poiints = new ArrayList<>();
-        poiints.add(new Vector2D(120, 160));
-        poiints.add(new Vector2D(35, 200));
-        poiints.add(new Vector2D(220, 260));
-        poiints.add(new Vector2D(220, 40));
+        List<Vector2D> points = new ArrayList<>();
+        points.add(new Vector2D(120, 160));
+        points.add(new Vector2D(35, 200));
+        points.add(new Vector2D(220, 260));
+        points.add(new Vector2D(220, 40));
 //        bc = new BezierCurve(poiints);
     }
     @Test

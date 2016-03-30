@@ -17,10 +17,10 @@ public class BersteinPolynomialD {
         this.th = th;
     }
 
-    private DerivativeStructure getPolynomial(double val) {
-        DerivativeStructure p = new DerivativeStructure(1, 2, CombinatoricsUtils.binomialCoefficient(degree, th));
-        DerivativeStructure t = new DerivativeStructure(1, 2, 0, val);
-        DerivativeStructure one = new DerivativeStructure(1, 2, 1);
+    public DerivativeStructure getPolynomial(double val) {
+        DerivativeStructure p = new DerivativeStructure(1, degree, CombinatoricsUtils.binomialCoefficient(degree, th));
+        DerivativeStructure t = new DerivativeStructure(1, degree, 0, val);
+        DerivativeStructure one = new DerivativeStructure(1, degree, 1);
         DerivativeStructure one_t = one.subtract(t);
 
         for(int i = 0; i < th; i++)

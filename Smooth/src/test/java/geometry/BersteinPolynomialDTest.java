@@ -9,7 +9,7 @@ import static org.hamcrest.core.Is.*;
 /**
  * Created by oscar on 30/03/16.
  */
-public class DSTest {
+public class BersteinPolynomialDTest {
     @Test
     public void testValues(){
         BersteinPolynomial b = new BersteinPolynomial(3,2);
