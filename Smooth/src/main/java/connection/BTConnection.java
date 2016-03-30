@@ -148,6 +148,22 @@ public class BTConnection implements DiscoveryListener {
         pw.flush();
     }
 
+    public void sendTest(String data) {
+        StringBuffer sb = new StringBuffer();
+        int max = 5;
+        if(Integer.parseInt(data) < 0) {
+            max = 4;
+            sb.append('-');
+        }
+        for(int i = 0; i < max-data.length(); i++) {
+            sb.append(0);
+        }
+        sb.append(Math.abs(Integer.parseInt(data)));
+        System.out.println(sb.toString());
+        pw.write(sb.toString());
+        pw.flush();
+    }
+
     public class Device {
         public String name;
         public String address;

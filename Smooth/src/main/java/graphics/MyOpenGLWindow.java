@@ -26,10 +26,12 @@ public class MyOpenGLWindow extends OpenGLWindow {
     private BTConnection btConnection = new BTConnection();
     private JTextArea jtaDevices;
     private JTextField jtfDeviceSelected;
+    private JSlider jsSpeed;
     private boolean animation = false;
     private int iterations = 0;
     private int iteration = 0;
     private double totalLength = 0;
+    private TwoWheelsRobot robot = new TwoWheelsRobot(0.135);
 
     public MyOpenGLWindow(String title) {
         super(title);
@@ -49,16 +51,17 @@ public class MyOpenGLWindow extends OpenGLWindow {
         jbCleanCanvas.addActionListener(e -> cleanCanvas());
         JButton jbShowInfo = new JButton("Show info");
         jbShowInfo.addActionListener(e -> showInfo());
+        JButton jbStartAnimation = new JButton("Start animation");
+        jbStartAnimation.addActionListener(e -> startAnimation());
+        JButton jbStopAnimation = new JButton("Stop animation");
+        jbStopAnimation.addActionListener(e -> stopAnimation());
+        jsSpeed = new JSlider(JSlider.HORIZONTAL, 0, 100, 50);
         JButton jbStartDiscovery = new JButton("Start discovery");
         jbStartDiscovery.addActionListener(e -> startDiscovery());
         jtaDevices = new JTextArea(10, 40);
         jtfDeviceSelected = new JTextField(2);
         JButton jbConnectDevide = new JButton("Connect");
         jbConnectDevide.addActionListener(e -> connectDevice());
-        JButton jbStartAnimation = new JButton("Start animation");
-        jbStartAnimation.addActionListener(e -> startAnimation());
-        JButton jbStopAnimation = new JButton("Stop animation");
-        jbStopAnimation.addActionListener(e -> stopAnimation());
 
         JPanel jpPanel = new JPanel();
         jpPanel.setLayout(new BoxLayout(jpPanel, BoxLayout.PAGE_AXIS));
@@ -66,12 +69,13 @@ public class MyOpenGLWindow extends OpenGLWindow {
         jpPanel.add(jbFitCurve);
         jpPanel.add(jbCleanCanvas);
         jpPanel.add(jbShowInfo);
+        jpPanel.add(jbStartAnimation);
+        jpPanel.add(jbStopAnimation);
+        jpPanel.add(jsSpeed);
         jpPanel.add(jbStartDiscovery);
         jpPanel.add(jtaDevices);
         jpPanel.add(jtfDeviceSelected);
         jpPanel.add(jbConnectDevide);
-        jpPanel.add(jbStartAnimation);
-        jpPanel.add(jbStopAnimation);
 
         return jpPanel;
     }
@@ -86,6 +90,7 @@ public class MyOpenGLWindow extends OpenGLWindow {
         iteration = 0;
         totalLength = cbs.getTotalLength();
         new Thread(new Hilo()).start();
+//        new Thread(new Hilo2()).start();
     }
 
     private void connectDevice() {
@@ -140,7 +145,6 @@ public class MyOpenGLWindow extends OpenGLWindow {
     }
 
     private void bezierS(GL2 gl) {
-        TwoWheelsRobot robot = new TwoWheelsRobot(20, 10);
         gl.glColor3d(0, 1, 0);
         gl.glPointSize(5);
         gl.glBegin(GL2.GL_POINTS);
@@ -289,19 +293,32 @@ public class MyOpenGLWindow extends OpenGLWindow {
     }
 
     private class Hilo implements Runnable {
-
         @Override
         public void run() {
             long start = System.currentTimeMillis();
             while (iteration < iterations) {
-                iteration++;
                 try {
-                    Thread.sleep(40);
+//                    Thread.sleep(jsSpeed.getValue());
+                    Thread.sleep(500);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+                cbs.inverse(totalLength * iteration / iterations);
+                double radius = cbs.curvatureRadius(totalLength * iteration / iterations)/200.0;
+                double differentialSpeed = robot.getDifferentialSpeed(radius, jsSpeed.getValue());
+                System.out.println("Differential speed: " + differentialSpeed);
+                double speed = jsSpeed.getValue();
+                String command = (int)(speed+differentialSpeed)+","+ (int)(speed-differentialSpeed);
+                System.out.println(command);
+//                btConnection.sendCommand(command);
+                btConnection.sendTest("" + (int)(14*(speed-differentialSpeed)));
+                btConnection.sendTest("" + (int)(14*(speed+differentialSpeed)));
+                iteration++;
                 display();
             }
+//            btConnection.sendCommand("0,0");
+            btConnection.sendTest(""+0);
+            btConnection.sendTest(""+0);
             System.out.println("Simulation time: " + (System.currentTimeMillis() - start)/1000.0);
             animation = false;
         }

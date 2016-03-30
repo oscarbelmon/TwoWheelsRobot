@@ -5,15 +5,14 @@ package robotics;
  */
 public class TwoWheelsRobot {
     private double wheelsDistance;
-    private double speed;
-    private double differentialSpeed;
 
-    public TwoWheelsRobot(double wheelsDistance, double speed) {
+    public TwoWheelsRobot(double wheelsDistance) {
         this.wheelsDistance = wheelsDistance;
-        this.speed = speed;
     }
 
-    public double getDifferentialSpeed(double r) {
-        return (speed * wheelsDistance/2) / r;
+    public double getDifferentialSpeed(double radius, double speed) {
+//        double difference = (speed * wheelsDistance/2) / radius;
+        double difference = (speed * wheelsDistance/2) / radius/2;
+        return difference;
     }
 }
