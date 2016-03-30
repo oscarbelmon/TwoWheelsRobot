@@ -36,7 +36,15 @@ public class BersteinPolynomialD {
         return getPolynomial(val).getReal();
     }
 
-    public double derivative(double val, int degree) {
+    public double derivative(int degree, double val) {
         return getPolynomial(val).getPartialDerivative(degree);
+    }
+
+    public double firstDerivative(double val) {
+        return derivative(1, val);
+    }
+
+    public double secondDerivative(double val) {
+        return derivative(2, val);
     }
 }
