@@ -304,7 +304,7 @@ public class MyOpenGLWindow extends OpenGLWindow {
     }
 
     public void setPoints(List<Vector2D> points) {
-        Parameterization parameterization = new ChordParameterization(pointsStrip.getPoints());
+        Parameterization parameterization = new ChordParameterization(points);
         pointsStrip = new PointsStrip(points, parameterization);
         fitCurve();
     }

@@ -15,7 +15,7 @@ public class BersteinPolynomialDTest {
         BersteinPolynomial b = new BersteinPolynomial(3,2);
         BersteinPolynomialD b2 = new BersteinPolynomialD(3,2);
 
-        for(int i = 0; i <= 10; i++)
+        for(int i = 0; i <= 100; i++)
             assertEquals(b.value(i/10.), b2.value(i/10.), 0.0001);
     }
 
@@ -24,7 +24,7 @@ public class BersteinPolynomialDTest {
         BersteinPolynomial b = new BersteinPolynomial(3,2);
         BersteinPolynomialD b2 = new BersteinPolynomialD(3,2);
 
-        for(int i = 0; i <= 10; i++)
+        for(int i = 0; i <= 100; i++)
             assertEquals(b.derivative().value(i/10.), b2.derivative(1, i/10.), 0.0001);
 
     }

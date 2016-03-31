@@ -64,14 +64,14 @@ public class BezierCurveDTest {
         Vector2D value2 = b2.value(t);
 
         // TODO Check this test it gives a big error
-        assertThat(value.getX(), is(closeTo(value2.getX(), 1)));
-        assertThat(value.getY(), is(closeTo(value2.getY(), 1)));
+        assertThat(value.getX(), is(closeTo(value2.getX(), 0.0001)));
+        assertThat(value.getY(), is(closeTo(value2.getY(), 0.0001)));
     }
 
     @Test
     public void testInverse() {
         double s = b.getLength()/(10*Math.random());
-        assertThat(b.inverse(s), is(closeTo(b2.inverse(s), 0.00011)));
+        assertThat(b.inverse(s), is(closeTo(b2.inverse(s), 0.0001)));
     }
 
     @Test
@@ -87,7 +87,7 @@ public class BezierCurveDTest {
         Vector2D center2 = b2.curvatureCenter(t);
 
         // TODO Check this test it gives a big error
-        assertThat(center.getX(), is(closeTo(center2.getX(), 1)));
-        assertThat(center.getY(), is(closeTo(center2.getY(), 1)));
+        assertThat(center.getX(), is(closeTo(center2.getX(), 0.0001)));
+        assertThat(center.getY(), is(closeTo(center2.getY(), 0.0001)));
     }
 }
