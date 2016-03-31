@@ -280,6 +280,7 @@ public class MyOpenGLWindowD extends OpenGLWindow {
     }
 
     private void fitCurve() {
+        long init = System.currentTimeMillis();
         other.setPoints(pointsStrip.getPoints());
         pointsStrip = pointsStrip.removeDuplicates();
         Parameterization parameterization = new ChordParameterization(pointsStrip.getPoints());
@@ -292,6 +293,7 @@ public class MyOpenGLWindowD extends OpenGLWindow {
         System.out.println("Points in cubics: " + ((cubics.size() - 1) * 3 + 4));
 //        cbs = new CubicBezierStrip(cubics);
         cbs = new CubicBezierStripD(cubics);
+        System.out.println("Time fitting with Derivative Structures" + (System.currentTimeMillis() - init)/1000.0);
         display();
     }
 

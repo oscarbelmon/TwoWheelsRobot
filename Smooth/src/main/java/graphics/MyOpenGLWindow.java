@@ -278,6 +278,7 @@ public class MyOpenGLWindow extends OpenGLWindow {
     }
 
     private void fitCurve() {
+        long init = System.currentTimeMillis();
         pointsStrip = pointsStrip.removeDuplicates();
         Parameterization parameterization = new ChordParameterization(pointsStrip.getPoints());
         PointsStrip ps = new PointsStrip(pointsStrip.getPoints(), parameterization);
@@ -289,6 +290,7 @@ public class MyOpenGLWindow extends OpenGLWindow {
         System.out.println("Points in cubics: " + ((cubics.size() - 1) * 3 + 4));
         cbs = new CubicBezierStrip(cubics);
 //        cbs = new CubicBezierStripD(cubics);
+        System.out.println("Time fitting with polynomials: " + (System.currentTimeMillis() - init)/1000.0);
         display();
     }
 
