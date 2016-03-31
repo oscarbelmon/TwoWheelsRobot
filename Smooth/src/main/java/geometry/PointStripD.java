@@ -2,6 +2,7 @@ package geometry;
 
 import algorithm.ChordParameterization;
 import algorithm.NewtonRaphsonParameterization;
+import algorithm.NewtonRaphsonParameterizationD;
 import algorithm.Parameterization;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
@@ -201,11 +202,11 @@ public class PointStripD {
         List<Vector2D> l1, l2;
         List<BezierCurveD> fe1, fe2;
         //
-//        for (int i = 0; i < 10; i++) {
-//            Parameterization parameterization = new NewtonRaphsonParameterization(this.parameterization, fitError.cb);
-//            PointsStrip ps = new PointsStrip(points, parameterization);
-//            fitError = ps.fitError(tangetAtStart, tangentAtEnd);
-//        }
+        for (int i = 0; i < 10; i++) {
+            Parameterization parameterization = new NewtonRaphsonParameterizationD(this.parameterization, fitError.cb);
+            PointStripD ps = new PointStripD(points, parameterization);
+            fitError = ps.fitError(tangetAtStart, tangentAtEnd);
+        }
         //
         if (fitError.totalError > threshold) {
             int indexWorst = points.indexOf(fitError.worstFittedPoint);
@@ -231,9 +232,9 @@ public class PointStripD {
         Vector2D onCurve, worstPoint = new Vector2D(0,0);
         BezierCurveD cb = fit(tangentAtStart, tangentAtEnd);
         //
-//        Parameterization parameterization = new NewtonRaphsonParameterization(this.parameterization, cb);
-//        PointsStrip ps = new PointsStrip(points, parameterization);
-//        cb = ps.fit(tangentAtStart, tangentAtEnd);
+        Parameterization parameterization = new NewtonRaphsonParameterizationD(this.parameterization, cb);
+        PointStripD ps = new PointStripD(points, parameterization);
+        cb = ps.fit(tangentAtStart, tangentAtEnd);
         //
         for (Vector2D point : points) {
             t = parameterization.getParameter(point);

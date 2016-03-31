@@ -25,8 +25,8 @@ public class BezierCurveD {
     }
 
     private void calculatePolynomials(double val) {
-        px = new DerivativeStructure(1, degree, val);
-        py = new DerivativeStructure(1, degree, val);
+        px = new DerivativeStructure(1, degree, 0, val);
+        py = new DerivativeStructure(1, degree, 0, val);
         int counter = 0;
         DerivativeStructure berstein;
         for(Vector2D point: points) {
@@ -126,4 +126,10 @@ public class BezierCurveD {
         return points.get(index);
     }
 
+    @Override
+    public String toString() {
+        return "BezierCurveD{" +
+                points +
+                '}';
+    }
 }

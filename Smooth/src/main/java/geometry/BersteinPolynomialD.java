@@ -18,9 +18,9 @@ public class BersteinPolynomialD {
     }
 
     public DerivativeStructure getPolynomial(double val) {
-        DerivativeStructure p = new DerivativeStructure(1, degree, CombinatoricsUtils.binomialCoefficient(degree, th));
+        DerivativeStructure p = new DerivativeStructure(1, degree, 0, CombinatoricsUtils.binomialCoefficient(degree, th));
         DerivativeStructure t = new DerivativeStructure(1, degree, 0, val);
-        DerivativeStructure one = new DerivativeStructure(1, degree, 1);
+        DerivativeStructure one = new DerivativeStructure(1, degree, 0, 1);
         DerivativeStructure one_t = one.subtract(t);
 
         for(int i = 0; i < th; i++)
@@ -33,7 +33,7 @@ public class BersteinPolynomialD {
     }
 
     public double value(double val) {
-        return getPolynomial(val).getReal();
+        return getPolynomial(val).getValue();
     }
 
     public double derivative(int degree, double val) {

@@ -23,8 +23,14 @@ public class BezierCurveDTest {
         ps.addPoint(new Vector2D(200, 260));
         ps.addPoint(new Vector2D(220, 40));
 
+        PointStripD psd = new PointStripD();
+        psd.addPoint(new Vector2D(100, 160));
+        psd.addPoint(new Vector2D(350, 200));
+        psd.addPoint(new Vector2D(200, 260));
+        psd.addPoint(new Vector2D(220, 40));
+
         b = new CubicBezier(ps);
-//        b2 = new BezierCurveD(ps);
+        b2 = new BezierCurveD(psd);
     }
 
     @Test

@@ -8,7 +8,7 @@ import connection.BTConnection;
 import geometry.*;
 import graphics.myopengl.OpenGLWindow;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
-import robotics.*;
+import robotics.TwoWheelsRobot;
 
 import javax.swing.*;
 import java.awt.event.MouseEvent;
@@ -16,15 +16,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by oscar on 12/2/16.
+ * Created by oscar on 31/03/16.
  */
-public class MyOpenGLWindow extends OpenGLWindow {
+public class MyOpenGLWindowD extends OpenGLWindow {
     private PointsStrip pointsStrip = new PointsStrip();
     private int cnt = 0;
-    private List<CubicBezier> cubics = new ArrayList<>();
-    private CubicBezierStrip cbs;
-//    private List<BezierCurveD> cubics = new ArrayList<>();
-//    private CubicBezierStripD cbs;
+//    private List<CubicBezier> cubics = new ArrayList<>();
+//    private CubicBezierStrip cbs;
+        private List<BezierCurveD> cubics = new ArrayList<>();
+    private CubicBezierStripD cbs;
     private BTConnection btConnection = new BTConnection();
     private JTextArea jtaDevices;
     private JTextField jtfDeviceSelected;
@@ -34,9 +34,11 @@ public class MyOpenGLWindow extends OpenGLWindow {
     private int iteration = 0;
     private double totalLength = 0;
     private TwoWheelsRobot robot = new TwoWheelsRobot(0.135);
+    private MyOpenGLWindow other;
 
-    public MyOpenGLWindow(String title) {
+    public MyOpenGLWindowD(String title, MyOpenGLWindow other) {
         super(title);
+        this.other = other;
     }
 
     @Override
@@ -116,10 +118,10 @@ public class MyOpenGLWindow extends OpenGLWindow {
             renderAnimation(gl);
         } else if (!cubics.isEmpty()) {
             gl.glColor3d(1, 0, 0);
-            for (CubicBezier cubic : cubics)
-                bezier(gl, cubic);
-//            for(BezierCurveD cubic: cubics)
+//            for (CubicBezier cubic : cubics)
 //                bezier(gl, cubic);
+            for(BezierCurveD cubic: cubics)
+                bezier(gl, cubic);
 //            bezierS(gl);
         } else {
             gl.glColor3d(0, 1, 0);
@@ -133,10 +135,10 @@ public class MyOpenGLWindow extends OpenGLWindow {
         gl.glPushMatrix();
         // The curves
         gl.glColor3d(1, 0, 0);
-        for (CubicBezier cubic : cubics)
-            bezier(gl, cubic);
-//        for(BezierCurveD cubic: cubics)
-//                bezier(gl, cubic);
+//        for (CubicBezier cubic : cubics)
+//            bezier(gl, cubic);
+        for(BezierCurveD cubic: cubics)
+                bezier(gl, cubic);
 
         // The point
         gl.glColor3d(0, 0, 0);
@@ -182,8 +184,8 @@ public class MyOpenGLWindow extends OpenGLWindow {
 
     }
 
-    private void bezier(GL2 gl, CubicBezier cb) {
-//    private void bezier(GL2 gl, BezierCurveD cb) {
+//    private void bezier(GL2 gl, CubicBezier cb) {
+    private void bezier(GL2 gl, BezierCurveD cb) {
         Vector2D p;
         double steps = 30.0;
         gl.glColor3d(1, 0, 0);
@@ -266,8 +268,8 @@ public class MyOpenGLWindow extends OpenGLWindow {
 
     private void showInfo() {
         System.out.println(cubics.size());
-        for (CubicBezier cubicBezier : cubics)
-//        for (BezierCurveD cubicBezier : cubics)
+//        for (CubicBezier cubicBezier : cubics)
+        for (BezierCurveD cubicBezier : cubics)
             System.out.println(cubicBezier);
     }
 
@@ -278,17 +280,18 @@ public class MyOpenGLWindow extends OpenGLWindow {
     }
 
     private void fitCurve() {
+        other.setPoints(pointsStrip.getPoints());
         pointsStrip = pointsStrip.removeDuplicates();
         Parameterization parameterization = new ChordParameterization(pointsStrip.getPoints());
-        PointsStrip ps = new PointsStrip(pointsStrip.getPoints(), parameterization);
-        cubics = ps.fit(20, pointsStrip.get(1).subtract(pointsStrip.get(0)).normalize(), pointsStrip.get(pointsStrip.size() - 2).subtract(pointsStrip.get(pointsStrip.size() - 1)).normalize());
-//        PointStripD ps = new PointStripD(pointsStrip.getPoints(), parameterization);
+//        PointsStrip ps = new PointsStrip(pointsStrip.getPoints(), parameterization);
 //        cubics = ps.fit(20, pointsStrip.get(1).subtract(pointsStrip.get(0)).normalize(), pointsStrip.get(pointsStrip.size() - 2).subtract(pointsStrip.get(pointsStrip.size() - 1)).normalize());
+        PointStripD ps = new PointStripD(pointsStrip.getPoints(), parameterization);
+        cubics = ps.fit(20, pointsStrip.get(1).subtract(pointsStrip.get(0)).normalize(), pointsStrip.get(pointsStrip.size() - 2).subtract(pointsStrip.get(pointsStrip.size() - 1)).normalize());
         System.out.println("Points: " + pointsStrip.size());
         System.out.println("Cubics: " + cubics.size());
         System.out.println("Points in cubics: " + ((cubics.size() - 1) * 3 + 4));
-        cbs = new CubicBezierStrip(cubics);
-//        cbs = new CubicBezierStripD(cubics);
+//        cbs = new CubicBezierStrip(cubics);
+        cbs = new CubicBezierStripD(cubics);
         display();
     }
 
@@ -301,12 +304,6 @@ public class MyOpenGLWindow extends OpenGLWindow {
             pointsStrip.addPoint(new Vector2D(radius * Math.cos(angle), radius * Math.sin(angle)));
         }
         display();
-    }
-
-    public void setPoints(List<Vector2D> points) {
-        Parameterization parameterization = new ChordParameterization(pointsStrip.getPoints());
-        pointsStrip = new PointsStrip(points, parameterization);
-        fitCurve();
     }
 
     private class Hilo implements Runnable {
