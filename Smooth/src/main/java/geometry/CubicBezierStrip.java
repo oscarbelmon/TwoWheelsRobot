@@ -9,19 +9,19 @@ import java.util.Map;
 /**
  * Created by oscar on 30/03/16.
  */
-public class CubicBezierStripD {
-    private Map<Double, BezierCurveD> cubics = new LinkedHashMap<>();
+public class CubicBezierStrip {
+    private Map<Double, BezierCurve> cubics = new LinkedHashMap<>();
     private double totalLength = 0;
 
-    public CubicBezierStripD(List<BezierCurveD> cubics) {
+    public CubicBezierStrip(List<BezierCurve> cubics) {
         super();
         calculateLength(cubics);
     }
 
-    private void calculateLength(List<BezierCurveD> cubics) {
+    private void calculateLength(List<BezierCurve> cubics) {
         double length = 0;
-        BezierCurveD tmp = null;
-        for(BezierCurveD cubic: cubics) {
+        BezierCurve tmp = null;
+        for(BezierCurve cubic: cubics) {
             length = cubic.getLength();
             this.cubics.put(totalLength, cubic);
             totalLength += length;
@@ -67,11 +67,11 @@ public class CubicBezierStripD {
     }
 
     private CubicWithLength filterCubic(double s) {
-        BezierCurveD previous = cubics.get(new Double(0));
+        BezierCurve previous = cubics.get(new Double(0));
         double previousLength = 0;
         for(Double length: cubics.keySet()) {
             if(length > s) {
-                BezierCurveD bc = previous;
+                BezierCurve bc = previous;
                 double t = bc.inverse(s - previousLength);
                 return new CubicWithLength(previous, t);
             }
@@ -82,10 +82,10 @@ public class CubicBezierStripD {
     }
 
     private class CubicWithLength {
-        BezierCurveD cubicBezier;
+        BezierCurve cubicBezier;
         double t;
 
-        CubicWithLength(BezierCurveD cb, double t) {
+        CubicWithLength(BezierCurve cb, double t) {
             this.cubicBezier = cb;
             this.t = t;
         }

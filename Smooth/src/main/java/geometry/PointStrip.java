@@ -1,7 +1,7 @@
 package geometry;
 
 import algorithm.ChordParameterization;
-import algorithm.NewtonRaphsonParameterizationD;
+import algorithm.NewtonRaphsonParameterization;
 import algorithm.Parameterization;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
@@ -11,15 +11,15 @@ import java.util.List;
 /**
  * Created by oscar on 9/3/16.
  */
-public class PointStripD {
+public class PointStrip {
     private List<Vector2D> points = new ArrayList<>();
     private Parameterization parameterization;
 
-    public PointStripD() {
+    public PointStrip() {
         super();
     }
 
-    public PointStripD(List<Vector2D> points, Parameterization parameterization) {
+    public PointStrip(List<Vector2D> points, Parameterization parameterization) {
         super();
         this.points = points;
         this.parameterization = parameterization;
@@ -41,21 +41,21 @@ public class PointStripD {
         return points.get(index);
     }
 
-    public PointStripD subList(int start, int end) {
-        return new PointStripD(points.subList(start, end), parameterization);
+    public PointStrip subList(int start, int end) {
+        return new PointStrip(points.subList(start, end), parameterization);
     }
 
-    public void addAll(PointStripD pointStrip) {
+    public void addAll(PointStrip pointStrip) {
         points.addAll(pointStrip.getPoints());
     }
 
-    public PointStripD removeDuplicates() {
+    public PointStrip removeDuplicates() {
         List<Vector2D> whitoutDuplicates = new ArrayList<>();
         for (Vector2D point : points) {
             if (whitoutDuplicates.contains(point) == false)
                 whitoutDuplicates.add(point);
         }
-        return new PointStripD(whitoutDuplicates, parameterization);
+        return new PointStrip(whitoutDuplicates, parameterization);
     }
 
     public Vector2D getTangentNormalizedAtStart() {
@@ -178,32 +178,32 @@ public class PointStripD {
         return result;
     }
 
-    private BezierCurveD fit(Vector2D tangentAtStart, Vector2D tangentAtEnd) {
-        PointStripD ps = new PointStripD();
+    private BezierCurve fit(Vector2D tangentAtStart, Vector2D tangentAtEnd) {
+        PointStrip ps = new PointStrip();
         ps.addPoint(points.get(0));
         Vector2D p1 = points.get(0).add(tangentAtStart.scalarMultiply(alpha1()));
         ps.addPoint(p1);
         Vector2D p2 = points.get(points.size() - 1).add(tangentAtEnd.scalarMultiply(alpha2()));
         ps.addPoint(p2);
         ps.addPoint(points.get(points.size() - 1));
-        return new BezierCurveD(ps);
+        return new BezierCurve(ps);
     }
 
-    public List<BezierCurveD> fit(double threshold, Vector2D tangetAtStart, Vector2D tangentAtEnd) {
-        List<BezierCurveD> result = new ArrayList<>();
+    public List<BezierCurve> fit(double threshold, Vector2D tangetAtStart, Vector2D tangentAtEnd) {
+        List<BezierCurve> result = new ArrayList<>();
         FitError fitError = fitError(tangetAtStart, tangentAtEnd);
         if (points.size() < 4) {
             System.out.println("Corta");
             result.add(fitError.cb);
             return result;
         }
-        PointStripD ps1, ps2;
+        PointStrip ps1, ps2;
         List<Vector2D> l1, l2;
-        List<BezierCurveD> fe1, fe2;
+        List<BezierCurve> fe1, fe2;
         //
         for (int i = 0; i < 10; i++) {
-            Parameterization parameterization = new NewtonRaphsonParameterizationD(this.parameterization, fitError.cb);
-            PointStripD ps = new PointStripD(points, parameterization);
+            Parameterization parameterization = new NewtonRaphsonParameterization(this.parameterization, fitError.cb);
+            PointStrip ps = new PointStrip(points, parameterization);
             fitError = ps.fitError(tangetAtStart, tangentAtEnd);
         }
         //
@@ -214,10 +214,10 @@ public class PointStripD {
                 else if (indexWorst + 4 >= points.size()) indexWorst = points.size() - 5;
                 Vector2D tangent = points.get(indexWorst+1).subtract(points.get(indexWorst-1)).normalize();
                 l1 = points.subList(0, indexWorst + 1);
-                ps1 = new PointStripD(l1, new ChordParameterization(l1));
+                ps1 = new PointStrip(l1, new ChordParameterization(l1));
                 fe1 = ps1.fit(threshold, tangetAtStart, tangent.scalarMultiply(-1));
                 l2 = points.subList(indexWorst, points.size());
-                ps2 = new PointStripD(l2, new ChordParameterization(l2));
+                ps2 = new PointStrip(l2, new ChordParameterization(l2));
                 fe2 = ps2.fit(threshold, tangent, tangentAtEnd);
                 result.addAll(fe1);
                 result.addAll(fe2);
@@ -229,10 +229,10 @@ public class PointStripD {
     private FitError fitError(Vector2D tangentAtStart, Vector2D tangentAtEnd) {
         double t, d = 0, dTmp, error = 0;
         Vector2D onCurve, worstPoint = new Vector2D(0,0);
-        BezierCurveD cb = fit(tangentAtStart, tangentAtEnd);
+        BezierCurve cb = fit(tangentAtStart, tangentAtEnd);
         //
-        Parameterization parameterization = new NewtonRaphsonParameterizationD(this.parameterization, cb);
-        PointStripD ps = new PointStripD(points, parameterization);
+        Parameterization parameterization = new NewtonRaphsonParameterization(this.parameterization, cb);
+        PointStrip ps = new PointStrip(points, parameterization);
         cb = ps.fit(tangentAtStart, tangentAtEnd);
         //
         for (Vector2D point : points) {
@@ -249,12 +249,12 @@ public class PointStripD {
     }
 
     private class FitError {
-        BezierCurveD cb;
+        BezierCurve cb;
         double maxError;
         double totalError;
         Vector2D worstFittedPoint;
 
-        public FitError(BezierCurveD cb, double maxError, double totalError, Vector2D worstFittedPoint) {
+        public FitError(BezierCurve cb, double maxError, double totalError, Vector2D worstFittedPoint) {
             this.cb = cb;
             this.maxError = maxError;
             this.totalError = totalError;

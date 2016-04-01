@@ -1,16 +1,16 @@
 package algorithm;
 
-import geometry.BezierCurveD;
+import geometry.BezierCurve;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 /**
  * Created by oscar on 31/03/16.
  */
-public class NewtonRaphsonParameterizationD extends Parameterization {
+public class NewtonRaphsonParameterization extends Parameterization {
     private Parameterization parameterization;
-    private BezierCurveD bc;
+    private BezierCurve bc;
 
-    public NewtonRaphsonParameterizationD(Parameterization parameterization, BezierCurveD cb) {
+    public NewtonRaphsonParameterization(Parameterization parameterization, BezierCurve cb) {
         super(parameterization.getPoints());
         this.parameterization = parameterization;
         this.bc = cb;

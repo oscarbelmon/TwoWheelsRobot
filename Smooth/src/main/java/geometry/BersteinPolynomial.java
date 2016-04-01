@@ -7,11 +7,11 @@ import org.apache.commons.math3.util.CombinatoricsUtils;
 /**
  * Created by oscar on 30/03/16.
  */
-public class BersteinPolynomialD {
+public class BersteinPolynomial {
     private int degree;
     private int th;
 
-    public BersteinPolynomialD(int degree, int th) {
+    public BersteinPolynomial(int degree, int th) {
         super();
         this.degree = degree;
         this.th = th;

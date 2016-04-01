@@ -18,13 +18,13 @@ import java.util.List;
 /**
  * Created by oscar on 31/03/16.
  */
-public class MyOpenGLWindowD extends OpenGLWindow {
-    private PointStripD pointsStrip = new PointStripD();
+public class MyOpenGLWindow extends OpenGLWindow {
+    private PointStrip pointsStrip = new PointStrip();
     private int cnt = 0;
 //    private List<CubicBezier> cubics = new ArrayList<>();
 //    private CubicBezierStrip cbs;
-        private List<BezierCurveD> cubics = new ArrayList<>();
-    private CubicBezierStripD cbs;
+        private List<BezierCurve> cubics = new ArrayList<>();
+    private CubicBezierStrip cbs;
     private BTConnection btConnection = new BTConnection();
     private JTextArea jtaDevices;
     private JTextField jtfDeviceSelected;
@@ -35,7 +35,7 @@ public class MyOpenGLWindowD extends OpenGLWindow {
     private double totalLength = 0;
     private TwoWheelsRobot robot = new TwoWheelsRobot(0.135);
 
-    public MyOpenGLWindowD(String title) {
+    public MyOpenGLWindow(String title) {
         super(title);
     }
 
@@ -118,7 +118,7 @@ public class MyOpenGLWindowD extends OpenGLWindow {
             gl.glColor3d(1, 0, 0);
 //            for (CubicBezier cubic : cubics)
 //                bezier(gl, cubic);
-            for(BezierCurveD cubic: cubics)
+            for(BezierCurve cubic: cubics)
                 bezier(gl, cubic);
 //            bezierS(gl);
         } else {
@@ -135,7 +135,7 @@ public class MyOpenGLWindowD extends OpenGLWindow {
         gl.glColor3d(1, 0, 0);
 //        for (CubicBezier cubic : cubics)
 //            bezier(gl, cubic);
-        for(BezierCurveD cubic: cubics)
+        for(BezierCurve cubic: cubics)
                 bezier(gl, cubic);
 
         // The point
@@ -183,7 +183,7 @@ public class MyOpenGLWindowD extends OpenGLWindow {
     }
 
 //    private void bezier(GL2 gl, CubicBezier cb) {
-    private void bezier(GL2 gl, BezierCurveD cb) {
+    private void bezier(GL2 gl, BezierCurve cb) {
         Vector2D p;
         double steps = 30.0;
         gl.glColor3d(1, 0, 0);
@@ -267,12 +267,12 @@ public class MyOpenGLWindowD extends OpenGLWindow {
     private void showInfo() {
         System.out.println(cubics.size());
 //        for (CubicBezier cubicBezier : cubics)
-        for (BezierCurveD cubicBezier : cubics)
+        for (BezierCurve cubicBezier : cubics)
             System.out.println(cubicBezier);
     }
 
     private void cleanCanvas() {
-        pointsStrip = new PointStripD();
+        pointsStrip = new PointStrip();
         cubics = new ArrayList<>();
         display();
     }
@@ -283,19 +283,19 @@ public class MyOpenGLWindowD extends OpenGLWindow {
         Parameterization parameterization = new ChordParameterization(pointsStrip.getPoints());
 //        PointsStrip ps = new PointsStrip(pointsStrip.getPoints(), parameterization);
 //        cubics = ps.fit(20, pointsStrip.get(1).subtract(pointsStrip.get(0)).normalize(), pointsStrip.get(pointsStrip.size() - 2).subtract(pointsStrip.get(pointsStrip.size() - 1)).normalize());
-        PointStripD ps = new PointStripD(pointsStrip.getPoints(), parameterization);
+        PointStrip ps = new PointStrip(pointsStrip.getPoints(), parameterization);
         cubics = ps.fit(20, pointsStrip.get(1).subtract(pointsStrip.get(0)).normalize(), pointsStrip.get(pointsStrip.size() - 2).subtract(pointsStrip.get(pointsStrip.size() - 1)).normalize());
         System.out.println("Points: " + pointsStrip.size());
         System.out.println("Cubics: " + cubics.size());
         System.out.println("Points in cubics: " + ((cubics.size() - 1) * 3 + 4));
 //        cbs = new CubicBezierStrip(cubics);
-        cbs = new CubicBezierStripD(cubics);
+        cbs = new CubicBezierStrip(cubics);
         System.out.println("Time fitting with Derivative Structures" + (System.currentTimeMillis() - init)/1000.0);
         display();
     }
 
     private void simulateCurve() {
-        pointsStrip = new PointStripD();
+        pointsStrip = new PointStrip();
         cubics = new ArrayList<>();
         double radius = 200, angle;
         for (int i = 0; i < 100; i++) {

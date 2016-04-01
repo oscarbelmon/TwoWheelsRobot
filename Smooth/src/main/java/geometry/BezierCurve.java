@@ -9,15 +9,15 @@ import java.util.List;
 /**
  * Created by oscar on 30/03/16.
  */
-public class BezierCurveD {
+public class BezierCurve {
     private List<Vector2D> points;
     private DerivativeStructure px;
     private DerivativeStructure py;
     private int degree;
     private double length;
 
-//    public BezierCurveD(List<Vector2D> points) {
-    public BezierCurveD(PointStripD ps) {
+//    public BezierCurve(List<Vector2D> points) {
+    public BezierCurve(PointStrip ps) {
         super();
         this.points = ps.getPoints();
         degree = points.size() - 1;
@@ -30,7 +30,7 @@ public class BezierCurveD {
         int counter = 0;
         DerivativeStructure berstein;
         for(Vector2D point: points) {
-            berstein = new BersteinPolynomialD(degree, counter).getPolynomial(val);
+            berstein = new BersteinPolynomial(degree, counter).getPolynomial(val);
             px = px.add(berstein.multiply(point.getX()));
             py = py.add(berstein.multiply(point.getY()));
             counter++;
@@ -128,7 +128,7 @@ public class BezierCurveD {
 
     @Override
     public String toString() {
-        return "BezierCurveD{" +
+        return "BezierCurve{" +
                 points +
                 '}';
     }
