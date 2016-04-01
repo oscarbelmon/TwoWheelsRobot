@@ -5,7 +5,7 @@ package graphics;
  */
 public class Main {
         public static void main(String[] args) {
-            MyOpenGLWindow other = new MyOpenGLWindow("TwoWheelsRobot");
-            new MyOpenGLWindowD("TwoWheelsRobotD", other);
+//            MyOpenGLWindow other = new MyOpenGLWindow("TwoWheelsRobot");
+            new MyOpenGLWindowD("TwoWheelsRobotD");
     }
 }

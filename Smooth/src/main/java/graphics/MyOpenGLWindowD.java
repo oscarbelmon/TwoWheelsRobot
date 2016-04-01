@@ -19,7 +19,7 @@ import java.util.List;
  * Created by oscar on 31/03/16.
  */
 public class MyOpenGLWindowD extends OpenGLWindow {
-    private PointsStrip pointsStrip = new PointsStrip();
+    private PointStripD pointsStrip = new PointStripD();
     private int cnt = 0;
 //    private List<CubicBezier> cubics = new ArrayList<>();
 //    private CubicBezierStrip cbs;
@@ -34,11 +34,9 @@ public class MyOpenGLWindowD extends OpenGLWindow {
     private int iteration = 0;
     private double totalLength = 0;
     private TwoWheelsRobot robot = new TwoWheelsRobot(0.135);
-    private MyOpenGLWindow other;
 
-    public MyOpenGLWindowD(String title, MyOpenGLWindow other) {
+    public MyOpenGLWindowD(String title) {
         super(title);
-        this.other = other;
     }
 
     @Override
@@ -274,14 +272,13 @@ public class MyOpenGLWindowD extends OpenGLWindow {
     }
 
     private void cleanCanvas() {
-        pointsStrip = new PointsStrip();
+        pointsStrip = new PointStripD();
         cubics = new ArrayList<>();
         display();
     }
 
     private void fitCurve() {
         long init = System.currentTimeMillis();
-        other.setPoints(pointsStrip.getPoints());
         pointsStrip = pointsStrip.removeDuplicates();
         Parameterization parameterization = new ChordParameterization(pointsStrip.getPoints());
 //        PointsStrip ps = new PointsStrip(pointsStrip.getPoints(), parameterization);
@@ -298,7 +295,7 @@ public class MyOpenGLWindowD extends OpenGLWindow {
     }
 
     private void simulateCurve() {
-        pointsStrip = new PointsStrip();
+        pointsStrip = new PointStripD();
         cubics = new ArrayList<>();
         double radius = 200, angle;
         for (int i = 0; i < 100; i++) {

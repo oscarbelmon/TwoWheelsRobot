@@ -1,6 +1,6 @@
 package algorithm;
 
-import geometry.PointsStrip;
+import geometry.PointStripD;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.junit.Test;
 
@@ -13,7 +13,7 @@ import static org.hamcrest.core.Is.*;
 public class DouglassPeuckerTest {
     @Test
     public void test1() {
-        PointsStrip points = new PointsStrip();
+        PointStripD points = new PointStripD();
         points.addPoint(new Vector2D(0,0));
         points.addPoint(new Vector2D(5,5));
         points.addPoint(new Vector2D(9,3));
@@ -27,7 +27,7 @@ public class DouglassPeuckerTest {
 
 
         DouglassPeucker douglassPeucker = new DouglassPeucker(points);
-        PointsStrip result = douglassPeucker.simplify(6);
+        PointStripD result = douglassPeucker.simplify(6);
         assertThat(result.size(), is(2));
 
         result = douglassPeucker.simplify(0.01);

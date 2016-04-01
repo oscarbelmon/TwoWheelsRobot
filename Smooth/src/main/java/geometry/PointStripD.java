@@ -1,7 +1,6 @@
 package geometry;
 
 import algorithm.ChordParameterization;
-import algorithm.NewtonRaphsonParameterization;
 import algorithm.NewtonRaphsonParameterizationD;
 import algorithm.Parameterization;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
@@ -42,21 +41,21 @@ public class PointStripD {
         return points.get(index);
     }
 
-    public PointsStrip subList(int start, int end) {
-        return new PointsStrip(points.subList(start, end), parameterization);
+    public PointStripD subList(int start, int end) {
+        return new PointStripD(points.subList(start, end), parameterization);
     }
 
-    public void addAll(PointsStrip pointsStrip) {
-        points.addAll(pointsStrip.getPoints());
+    public void addAll(PointStripD pointStrip) {
+        points.addAll(pointStrip.getPoints());
     }
 
-    public PointsStrip removeDuplicates() {
+    public PointStripD removeDuplicates() {
         List<Vector2D> whitoutDuplicates = new ArrayList<>();
         for (Vector2D point : points) {
             if (whitoutDuplicates.contains(point) == false)
                 whitoutDuplicates.add(point);
         }
-        return new PointsStrip(whitoutDuplicates, parameterization);
+        return new PointStripD(whitoutDuplicates, parameterization);
     }
 
     public Vector2D getTangentNormalizedAtStart() {

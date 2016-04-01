@@ -1,23 +1,23 @@
 package algorithm;
 
 import geometry.Line;
-import geometry.PointsStrip;
+import geometry.PointStripD;
 
 /**
  * Created by oscar on 4/03/16.
  */
 public class DouglassPeucker {
-    private PointsStrip points;
+    private PointStripD points;
 
-    public DouglassPeucker(PointsStrip points) {
+    public DouglassPeucker(PointStripD points) {
         super();
         this.points = points;
     }
 
-    public PointsStrip simplify(double epsilon) {
-        PointsStrip result1;
-        PointsStrip result2;
-        PointsStrip result = new PointsStrip();
+    public PointStripD simplify(double epsilon) {
+        PointStripD result1;
+        PointStripD result2;
+        PointStripD result = new PointStripD();
         double dMax = 0, d;
         int index = 0, end = points.size() - 1;
         if (end < 2) {
