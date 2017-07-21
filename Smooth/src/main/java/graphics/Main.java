@@ -9,6 +9,7 @@ import geometry.PointsStrip;
  */
 public class Main {
         public static void main(String[] args) {
-        new MyOpenGLWindow("Robot");
+//            new MyOpenGLWindow("Robot");
+            new MyOpenGLWindowMagnetic("Beizier");
     }
 }
